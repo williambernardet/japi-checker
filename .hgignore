@@ -28,3 +28,5 @@ syntax: regexp
 ^japi-checker/.project$
 syntax: regexp
 ^japi-checker/.settings$
+syntax: regexp
+^\.settings$

@@ -18,7 +18,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.googlecode.japi-checker</groupId>
 	<artifactId>japi-checker-pom</artifactId>
-	<version>0.1.0</version>
+	<version>0.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <licenses>
         <license>
@@ -39,6 +39,14 @@
         <module>japi-checker</module>
         <module>reference-test-jar</module>
         <module>new-test-jar</module>
-    <module>japi-checker-maven-plugin</module>
-  </modules>
+        <module>japi-checker-maven-plugin</module>
+    </modules>
+    
+    <distributionManagement>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <uniqueVersion>true</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
