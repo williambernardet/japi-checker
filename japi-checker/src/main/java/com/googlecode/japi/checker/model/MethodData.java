@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.googlecode.japi.checker.JavaItem;
 import com.googlecode.japi.checker.Reporter;
 import com.googlecode.japi.checker.Rule;
 
@@ -28,8 +27,8 @@ public class MethodData extends JavaItem {
     private String descriptor;
     private List<String> exceptions = new ArrayList<String>();
     
-    public MethodData(int access, String name, String descriptor, String signature, String[] exceptions) {
-        super(access, name);
+    public MethodData(ClassData owner, int access, String name, String descriptor, String signature, String[] exceptions) {
+        super(owner, access, name);
         this.setSignature(signature);
         this.setDescriptor(descriptor);
         if (exceptions != null) {

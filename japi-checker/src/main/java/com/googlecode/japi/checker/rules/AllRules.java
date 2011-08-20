@@ -18,9 +18,9 @@ package com.googlecode.japi.checker.rules;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.googlecode.japi.checker.JavaItem;
 import com.googlecode.japi.checker.Reporter;
 import com.googlecode.japi.checker.Rule;
+import com.googlecode.japi.checker.model.JavaItem;
 
 public class AllRules implements Rule {
 
@@ -38,6 +38,7 @@ public class AllRules implements Rule {
         rules.add(new ClassChangedToAbstract());
         rules.add(new ClassChangedToFinal());
         rules.add(new ClassChangedToInterface());
+        rules.add(new CheckMethodChangedToFinal());
     }
     
     @Override

@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.googlecode.japi.checker;
+package com.googlecode.japi.checker.model;
 
 import org.objectweb.asm.Opcodes;
 
+import com.googlecode.japi.checker.Scope;
+
 public abstract class JavaItem {
     private Scope visibility = Scope.PROTECTED;
+    private JavaItem owner;
     private String name;
     private boolean isAbstract;
     private boolean isInterface;
@@ -26,7 +29,7 @@ public abstract class JavaItem {
     private boolean isStatic;
     private boolean isTransient;
 
-    protected JavaItem(int access, String name) {
+    protected JavaItem(JavaItem owner, int access, String name) {
         this.setName(name);
         this.setVisibility(toScope(access));
         this.setAbstract((access & Opcodes.ACC_ABSTRACT) == Opcodes.ACC_ABSTRACT);
@@ -138,6 +141,22 @@ public abstract class JavaItem {
      */
     protected void setName(String name) {
         this.name = name;
+    }
+
+    
+    
+    /**
+     * @return the owner
+     */
+    public JavaItem getOwner() {
+        return owner;
+    }
+
+    /**
+     * @param owner the owner to set
+     */
+    protected void setOwner(JavaItem owner) {
+        this.owner = owner;
     }
 
     public abstract String getType(); 

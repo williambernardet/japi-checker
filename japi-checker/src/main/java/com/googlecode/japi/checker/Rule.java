@@ -15,6 +15,8 @@
  */
 package com.googlecode.japi.checker;
 
+import com.googlecode.japi.checker.model.JavaItem;
+
 public interface Rule {
 
     void checkBackwardCompatibility(Reporter reporter, JavaItem reference, JavaItem newItem);

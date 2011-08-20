@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.googlecode.japi.checker.JavaItem;
 import com.googlecode.japi.checker.Reporter;
 import com.googlecode.japi.checker.Rule;
 
@@ -33,8 +32,8 @@ public class ClassData extends JavaItem {
     private List<String> interfaces = new ArrayList<String>();
     private int version;
 
-    public ClassData(int access, String name, String signature, String superName, String[] interfaces, int version) {
-        super(access, name);
+    public ClassData(JavaItem owner, int access, String name, String signature, String superName, String[] interfaces, int version) {
+        super(owner, access, name);
         this.setSignature(signature);
         this.superName = superName;
         Collections.addAll(this.interfaces, interfaces);

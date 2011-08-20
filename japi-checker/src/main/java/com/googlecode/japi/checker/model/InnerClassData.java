@@ -15,16 +15,15 @@
  */
 package com.googlecode.japi.checker.model;
 
-import com.googlecode.japi.checker.JavaItem;
 
 public class InnerClassData extends JavaItem {
 
     private String outerName;
     private String innerName;
     
-    public InnerClassData(int access, String name, String outerName,
+    public InnerClassData(JavaItem owner, int access, String name, String outerName,
             String innerName) {
-        super(access, name);
+        super(owner, access, name);
         this.setOuterName(outerName);
         this.setInnerName(innerName);
     }

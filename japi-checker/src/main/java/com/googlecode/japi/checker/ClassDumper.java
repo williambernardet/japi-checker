@@ -15,6 +15,12 @@
  */
 package com.googlecode.japi.checker;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassVisitor;
@@ -28,11 +34,12 @@ import com.googlecode.japi.checker.model.MethodData;
 
 public class ClassDumper implements ClassVisitor {
     public ClassData clazz;
-    
+    public Map<String, ClassData> classes = new HashMap<String, ClassData>();
     public void visit(int version, int access, String name, String signature,
             String superName, String[] interfaces) {
         System.out.println("class " + name + " extends " + superName + " {");
-        clazz = new ClassData(access, name, signature, superName, interfaces, version);
+        clazz = new ClassData(null, access, name, signature, superName, interfaces, version);
+        classes.put(name, clazz);
     }
 
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
@@ -44,25 +51,26 @@ public class ClassDumper implements ClassVisitor {
 
     public void visitEnd() {
         System.out.println("}");
+        clazz = null;
     }
 
     public FieldVisitor visitField(int access, String name, String desc,
             String signature, Object value) {
         System.out.println("    -(field) " + name + " " + signature + " " + desc);
-        clazz.add(new FieldData(access, name, desc, signature, value));
+        clazz.add(new FieldData(clazz, access, name, desc, signature, value));
         return null;
     }
 
     public void visitInnerClass(String name, String outerName, String innerName, int access) {
         System.out.println("    +(ic) " + name + " " + outerName + " " + innerName + " " + access);
         //clazz = new ClassData(access, name, innerName);
-        clazz.add(new InnerClassData(access, name, outerName, innerName));
+        clazz.add(new InnerClassData(clazz, access, name, outerName, innerName));
     }
 
     public MethodVisitor visitMethod(int access, String name, String descriptor,
             String signature, String[] exceptions) {
         System.out.println("    +(m) " + name + " " + descriptor + " " + signature + " " + exceptions);
-        clazz.add(new MethodData(access, name, descriptor, signature, exceptions));
+        clazz.add(new MethodData(clazz, access, name, descriptor, signature, exceptions));
         return null;
     }
 
@@ -73,7 +81,7 @@ public class ClassDumper implements ClassVisitor {
     public void visitSource(String source, String debug) {
     }
 
-    public ClassData getClazz() {
-        return clazz;
+    public List<ClassData> getClasses() {
+        return new ArrayList<ClassData>(classes.values());
     }
 }

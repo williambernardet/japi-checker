@@ -34,7 +34,6 @@ import com.googlecode.japi.checker.model.ClassData;
 import com.googlecode.japi.checker.utils.AntPatternMatcher;
 
 public class BCChecker {
-
     private File reference;
     private File newArtifact;
     private List<AntPatternMatcher> includes = new ArrayList<AntPatternMatcher>();
@@ -64,16 +63,19 @@ public class BCChecker {
             rules = Collections.emptyList();
         }
         try {
-            List<ClassData> referenceData = readData(reference);
-            List<ClassData> newData = readData(newArtifact);
+            ClassDumper referenceDumper = new ClassDumper();
+            ClassDumper newDumper = new ClassDumper();
+
+            List<ClassData> referenceData = readData(reference, referenceDumper);
+            List<ClassData> newData = readData(newArtifact, newDumper);
             for (ClassData clazz : referenceData) {
                 boolean found = false;
                 for (ClassData newClazz : newData) {
                     if (clazz.isSame(newClazz)) {
-                        newClazz.checkBackwardCompatibility(reporter, clazz, rules);
                         for (Rule rule : rules) {
                             rule.checkBackwardCompatibility(reporter, clazz, newClazz);
                         }
+                        newClazz.checkBackwardCompatibility(reporter, clazz, rules);
                         found = true;
                         break;
                     }
@@ -88,23 +90,22 @@ public class BCChecker {
     }
     
     
-    private List<ClassData>readData(File file) throws IOException {
+    private List<ClassData>readData(File file, ClassDumper dumper) throws IOException {
         if (file.isDirectory()) {
-            return this.readDataFromDir(file, null);
+            return this.readDataFromDir(file, dumper, null);
         } else {
-            return this.readDataFromJar(file);
+            return this.readDataFromJar(file, dumper);
         }
     }
 
-    private List<ClassData> readDataFromDir(File dir, String path) throws IOException {
-        List<ClassData> data = new ArrayList<ClassData>();
+    private List<ClassData> readDataFromDir(File dir, ClassDumper dumper, String path) throws IOException {
         byte buffer[] = new byte[2048]; 
         if (path == null) {
             path = "";
         }
         for (File file : dir.listFiles()) {
             if (file.isDirectory()) {
-                data.addAll(readDataFromDir(file, path + file.getName() + "/"));
+                readDataFromDir(file, dumper, path + file.getName() + "/");
             } else if (file.getName().endsWith(".class") && shouldCheck(path + file.getName())) {
                 ByteArrayOutputStream os =  new ByteArrayOutputStream();
                 InputStream is = new FileInputStream(file);
@@ -112,17 +113,14 @@ public class BCChecker {
                 while ((count = is.read(buffer)) != -1) {
                     os.write(buffer, 0, count);
                 }
-                ClassDumper dumper = new ClassDumper();
                 ClassReader cr = new ClassReader(os.toByteArray());
                 cr.accept(dumper, 0);
-                data.add(dumper.getClazz());
             }
         }
-        return data;
+        return dumper.getClasses();
     }
     
-    private List<ClassData> readDataFromJar(File jar) throws IOException {
-        List<ClassData> data = new ArrayList<ClassData>();
+    private List<ClassData> readDataFromJar(File jar, ClassDumper dumper) throws IOException {
         FileInputStream fis = new FileInputStream(jar);
         ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
         ZipEntry entry = null;
@@ -134,13 +132,11 @@ public class BCChecker {
                 while ((count = zis.read(buffer)) != -1) {
                     os.write(buffer, 0, count);
                 }
-                ClassDumper dumper = new ClassDumper();
                 ClassReader cr = new ClassReader(os.toByteArray());
                 cr.accept(dumper, 0);
-                data.add(dumper.getClazz());
             }
         }
-        return data;
+        return dumper.getClasses();
     }
     
     protected boolean shouldCheck(String subpath) {

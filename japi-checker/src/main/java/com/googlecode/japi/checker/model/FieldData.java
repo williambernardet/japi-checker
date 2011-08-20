@@ -17,7 +17,6 @@ package com.googlecode.japi.checker.model;
 
 import java.util.List;
 
-import com.googlecode.japi.checker.JavaItem;
 import com.googlecode.japi.checker.Reporter;
 import com.googlecode.japi.checker.Rule;
 
@@ -26,8 +25,8 @@ public class FieldData extends JavaItem {
     private String signature;
     private Object value;
 
-    public FieldData(int access, String name, String descriptor, String signature, Object value) {
-        super(access, name);
+    public FieldData(JavaItem owner, int access, String name, String descriptor, String signature, Object value) {
+        super(owner, access, name);
         this.setDescriptor(descriptor);
         this.setSignature(signature);
         this.setValue(value);
