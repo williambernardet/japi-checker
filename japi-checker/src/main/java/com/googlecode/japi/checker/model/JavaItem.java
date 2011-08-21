@@ -30,6 +30,7 @@ public abstract class JavaItem {
     private boolean isTransient;
 
     protected JavaItem(JavaItem owner, int access, String name) {
+        this.setOwner(owner);
         this.setName(name);
         this.setVisibility(toScope(access));
         this.setAbstract((access & Opcodes.ACC_ABSTRACT) == Opcodes.ACC_ABSTRACT);
@@ -159,5 +160,13 @@ public abstract class JavaItem {
         this.owner = owner;
     }
 
-    public abstract String getType(); 
+    public abstract String getType();
+    
+    /**
+     * Display the item name.
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return name;
+    }
 }

@@ -17,6 +17,7 @@ package com.googlecode.japi.checker.rules;
 
 import com.googlecode.japi.checker.Reporter;
 import com.googlecode.japi.checker.Rule;
+import com.googlecode.japi.checker.Scope;
 import com.googlecode.japi.checker.Reporter.Level;
 import com.googlecode.japi.checker.model.JavaItem;
 import com.googlecode.japi.checker.model.MethodData;
@@ -27,8 +28,12 @@ public class CheckMethodChangedToStatic implements Rule {
     public void checkBackwardCompatibility(Reporter reporter,
             JavaItem reference, JavaItem newItem) {
         if (reference instanceof MethodData) {
-            if (!reference.isFinal() && newItem.isFinal()) {
-                reporter.report(Level.ERROR, reference.getName() + ": the method has been made static.");
+            if (Scope.PUBLIC == reference.getVisibility() || Scope.PROTECTED == reference.getVisibility()) {
+                if (!reference.isStatic() && newItem.isStatic()) {
+                    reporter.report(Level.ERROR, reference.getOwner() + ": the method " + reference.getName() + " has been made static.");
+                } else if (reference.isStatic() && !newItem.isStatic()) {
+                    reporter.report(Level.ERROR, reference.getOwner() + ": the method " + reference.getName() + " is not static anymore.");
+                }
             }
         }
     }

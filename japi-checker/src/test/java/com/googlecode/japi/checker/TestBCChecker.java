@@ -29,6 +29,8 @@ import com.googlecode.japi.checker.rules.CheckChangeOfScope;
 import com.googlecode.japi.checker.rules.CheckFieldChangeOfType;
 import com.googlecode.japi.checker.rules.CheckFieldChangeToStatic;
 import com.googlecode.japi.checker.rules.CheckInheritanceChanges;
+import com.googlecode.japi.checker.rules.CheckMethodChangedToFinal;
+import com.googlecode.japi.checker.rules.CheckMethodChangedToStatic;
 import com.googlecode.japi.checker.rules.CheckMethodException;
 import com.googlecode.japi.checker.rules.CheckRemovedMethod;
 import com.googlecode.japi.checker.rules.ClassChangedToAbstract;
@@ -158,6 +160,23 @@ public class TestBCChecker {
         //reporter.assertContains(Level.ERROR, "Public class com/googlecode/japi/checker/tests/RemovedClass has been removed.");
     }
 
+    @Test
+    public void testCheckMethodChangedToFinal() throws InstantiationException, IllegalAccessException {
+        BasicReporter reporter = check(CheckMethodChangedToFinal.class, "**/CheckMethodAccess.class");
+        reporter.assertContains(Level.ERROR, "com/googlecode/japi/checker/tests/CheckMethodAccess: the method publicToFinal has been made final, this now prevents overriding.");
+        reporter.assertContains(Level.ERROR, "com/googlecode/japi/checker/tests/CheckMethodAccess: the method protectedToFinal has been made final, this now prevents overriding.");
+        assertEquals(2, reporter.count(Level.ERROR));
+    }
+
+    @Test
+    public void testCheckMethodChangedToStatic() throws InstantiationException, IllegalAccessException {
+        BasicReporter reporter = check(CheckMethodChangedToStatic.class, "**/CheckMethodAccess.class");
+        reporter.assertContains(Level.ERROR, "com/googlecode/japi/checker/tests/CheckMethodAccess: the method publicToStatic has been made static.");
+        reporter.assertContains(Level.ERROR, "com/googlecode/japi/checker/tests/CheckMethodAccess: the method protectedToStatic has been made static.");
+        reporter.assertContains(Level.ERROR, "com/googlecode/japi/checker/tests/CheckMethodAccess: the method publicFromStatic is not static anymore.");
+        reporter.assertContains(Level.ERROR, "com/googlecode/japi/checker/tests/CheckMethodAccess: the method protectedFromStatic is not static anymore");
+        assertEquals(4, reporter.count(Level.ERROR));
+    }
 
     public BasicReporter check(Class<? extends Rule> clazz, String ... includes) throws InstantiationException, IllegalAccessException {
         BCChecker checker = new BCChecker(reference, newVersion);
