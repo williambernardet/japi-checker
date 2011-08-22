@@ -16,10 +16,10 @@
 package com.googlecode.japi.checker;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
@@ -33,11 +33,13 @@ import com.googlecode.japi.checker.model.InnerClassData;
 import com.googlecode.japi.checker.model.MethodData;
 
 public class ClassDumper implements ClassVisitor {
-    public ClassData clazz;
-    public Map<String, ClassData> classes = new HashMap<String, ClassData>();
+    private Logger logger = Logger.getLogger(ClassDumper.class.getName());
+    private ClassData clazz; // current main class being parsed.
+    private Map<String, ClassData> classes = new HashMap<String, ClassData>();
+    
     public void visit(int version, int access, String name, String signature,
             String superName, String[] interfaces) {
-        System.out.println("class " + name + " extends " + superName + " {");
+        logger.fine("class " + name + " extends " + superName + " {");
         clazz = new ClassData(null, access, name, signature, superName, interfaces, version);
         classes.put(name, clazz);
     }
@@ -50,35 +52,38 @@ public class ClassDumper implements ClassVisitor {
     }
 
     public void visitEnd() {
-        System.out.println("}");
+        logger.fine("}");
         clazz = null;
     }
 
     public FieldVisitor visitField(int access, String name, String desc,
             String signature, Object value) {
-        System.out.println("    -(field) " + name + " " + signature + " " + desc);
+        logger.fine("    -(field) " + name + " " + signature + " " + desc);
         clazz.add(new FieldData(clazz, access, name, desc, signature, value));
         return null;
     }
 
     public void visitInnerClass(String name, String outerName, String innerName, int access) {
-        System.out.println("    +(ic) " + name + " " + outerName + " " + innerName + " " + access);
+        logger.fine("    +(ic) " + name + " " + outerName + " " + innerName + " " + access);
         //clazz = new ClassData(access, name, innerName);
         clazz.add(new InnerClassData(clazz, access, name, outerName, innerName));
     }
 
     public MethodVisitor visitMethod(int access, String name, String descriptor,
             String signature, String[] exceptions) {
-        System.out.println("    +(m) " + name + " " + descriptor + " " + signature + " " + exceptions);
+        logger.fine("    +(m) " + name + " " + descriptor + " " + signature + " " + exceptions);
         clazz.add(new MethodData(clazz, access, name, descriptor, signature, exceptions));
         return null;
     }
 
     public void visitOuterClass(String owner, String name, String desc) {
-        System.out.println("    *(oc) " + name + " " + desc);
+        logger.fine("    *(oc) " + name + " " + desc);
     }
 
     public void visitSource(String source, String debug) {
+        logger.fine(" - source: " + source);
+        logger.fine(" - debug: " + debug);
+        clazz.setSource(source);
     }
 
     public List<ClassData> getClasses() {

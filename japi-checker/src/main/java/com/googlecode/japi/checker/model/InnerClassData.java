@@ -21,7 +21,7 @@ public class InnerClassData extends JavaItem {
     private String outerName;
     private String innerName;
     
-    public InnerClassData(JavaItem owner, int access, String name, String outerName,
+    public InnerClassData(ClassData owner, int access, String name, String outerName,
             String innerName) {
         super(owner, access, name);
         this.setOuterName(outerName);

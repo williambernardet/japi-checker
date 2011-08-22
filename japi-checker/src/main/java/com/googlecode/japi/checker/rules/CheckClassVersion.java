@@ -18,6 +18,7 @@ package com.googlecode.japi.checker.rules;
 import com.googlecode.japi.checker.Reporter;
 import com.googlecode.japi.checker.Rule;
 import com.googlecode.japi.checker.Reporter.Level;
+import com.googlecode.japi.checker.Reporter.Report;
 import com.googlecode.japi.checker.model.ClassData;
 import com.googlecode.japi.checker.model.JavaItem;
 
@@ -28,8 +29,8 @@ public class CheckClassVersion implements Rule {
             JavaItem reference, JavaItem newItem) {
         if (reference instanceof ClassData) {
             if (((ClassData) reference).getVersion() != ((ClassData) newItem).getVersion()) {
-                reporter.report(Level.ERROR, reference.getName() + ": the class Java version has changed from " +
-                        ((ClassData) reference).getVersion() + " to " + ((ClassData) newItem).getVersion() + ", check your compiler target.");
+                reporter.report(new Report(Level.ERROR, "The Java version has changed from " +
+                        ((ClassData) reference).getVersion() + " to " + ((ClassData) newItem).getVersion() + ", check your compiler target.", reference, newItem));
             }
         }
     }

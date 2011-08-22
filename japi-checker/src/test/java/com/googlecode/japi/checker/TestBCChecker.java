@@ -18,9 +18,14 @@ package com.googlecode.japi.checker;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,9 +46,28 @@ public class TestBCChecker {
     
     private File reference;
     private File newVersion;
+    private Handler handler = new Handler() {
+
+        @Override
+        public void close() throws SecurityException {
+        }
+
+        @Override
+        public void flush() {
+        }
+
+        @Override
+        public void publish(LogRecord record) {
+            System.out.println(record.getMessage());
+        }
+        
+    };
     
     @Before
     public void setUp() {
+        Logger.getLogger(ClassDumper.class.getName()).setLevel(java.util.logging.Level.ALL);
+        Logger.getLogger(ClassDumper.class.getName()).addHandler(handler);
+        System.out.println("==================================");
         for (String file : System.getProperty("java.class.path").split(File.pathSeparator)) {
             if (file.contains("reference-test-jar")) {
                 reference = new File(file);
@@ -54,35 +78,40 @@ public class TestBCChecker {
             }
         }
     }
+    
+    @After
+    public void tearDown() {
+        Logger.getLogger(ClassDumper.class.getName()).removeHandler(handler);
+    }
 
     @Test
-    public void testBCCheckerInclude() throws InstantiationException, IllegalAccessException {
+    public void testBCCheckerInclude() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(null, "**/Nothing*.class");
         assertEquals(0, reporter.getMessages().size());
     }
 
     
     @Test
-    public void testCheckerClassRemoved() throws InstantiationException, IllegalAccessException {
+    public void testCheckerClassRemoved() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(null, "**/RemovedClass.class");
         assertEquals(1, reporter.count(Level.ERROR));
         reporter.assertContains(Level.ERROR, "Public class com/googlecode/japi/checker/tests/RemovedClass has been removed.");
     }
 
     @Test
-    public void testClassToInterface() throws InstantiationException, IllegalAccessException {
+    public void testClassToInterface() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(ClassChangedToInterface.class, "**/ClassToInterface.class");
-        reporter.assertContains(Level.ERROR, "com/googlecode/japi/checker/tests/ClassToInterface: the class has been change into an interface.");
+        reporter.assertContains(Level.ERROR, "The class has been change into an interface.");
     }
 
     @Test
-    public void testClassToAbstract() throws InstantiationException, IllegalAccessException {
+    public void testClassToAbstract() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(ClassChangedToAbstract.class, "**/ClassToAbstract.class");
-        reporter.assertContains(Level.ERROR, "com/googlecode/japi/checker/tests/ClassToAbstract: the class has been change to be abstract.");
+        reporter.assertContains(Level.ERROR, "The class com/googlecode/japi/checker/tests/ClassToAbstract has been made abstract.");
     }
 
     @Test
-    public void testCheckChangeOfScope() throws InstantiationException, IllegalAccessException {
+    public void testCheckChangeOfScope() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(CheckChangeOfScope.class, "**/PublicClassToProtected.class");
         reporter.assertContains(Level.ERROR, "The visibility of the <init> method has been changed from PUBLIC to NO_SCOPE");
         reporter.assertContains(Level.ERROR, "The visibility of the com/googlecode/japi/checker/tests/PublicClassToProtected class has been changed from PUBLIC to NO_SCOPE");
@@ -90,7 +119,7 @@ public class TestBCChecker {
     }
 
     @Test
-    public void testCheckChangeOfScopeForField() throws InstantiationException, IllegalAccessException {
+    public void testCheckChangeOfScopeForField() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(CheckChangeOfScope.class, "**/FieldTestCases.class");
         reporter.assertContains(Level.ERROR, "The visibility of the testChangeOfScopeFromPublicToProtected field has been changed from PUBLIC to PROTECTED");
         reporter.assertContains(Level.ERROR, "The visibility of the testChangeOfScopeFromPublicToPrivate field has been changed from PUBLIC to PRIVATE");
@@ -103,7 +132,7 @@ public class TestBCChecker {
     }
 
     @Test
-    public void testCheckFieldChangeOfType() throws InstantiationException, IllegalAccessException {
+    public void testCheckFieldChangeOfType() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(CheckFieldChangeOfType.class, "**/FieldTestCases.class");
         reporter.assertContains(Level.ERROR, "field testChangeOfTypePublic has been modified from Ljava/lang/String; to Ljava/lang/Boolean;");
         reporter.assertContains(Level.ERROR, "field testChangeOfTypeProtected has been modified from Ljava/lang/String; to Ljava/lang/Boolean;");
@@ -111,40 +140,40 @@ public class TestBCChecker {
     }
 
     @Test
-    public void testCheckFieldChangeToStatic() throws InstantiationException, IllegalAccessException {
+    public void testCheckFieldChangeToStatic() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(CheckFieldChangeToStatic.class, "**/FieldTestCases.class");
-        reporter.assertContains(Level.ERROR, "field testPublicChangeToStatic is now static.");
-        reporter.assertContains(Level.ERROR, "field testProtectedChangeToStatic is now static.");
-        reporter.assertContains(Level.ERROR, "field testPublicChangeFromStatic is not static anymore.");
-        reporter.assertContains(Level.ERROR, "field testProtectedChangeFromStatic is not static anymore.");
+        reporter.assertContains(Level.ERROR, "The field testPublicChangeToStatic is now static.");
+        reporter.assertContains(Level.ERROR, "The field testProtectedChangeToStatic is now static.");
+        reporter.assertContains(Level.ERROR, "The field testPublicChangeFromStatic is not static anymore.");
+        reporter.assertContains(Level.ERROR, "The field testProtectedChangeFromStatic is not static anymore.");
         assertEquals(4, reporter.count(Level.ERROR));
     }
 
     @Test
-    public void testClassChangedToFinal() throws InstantiationException, IllegalAccessException {
+    public void testClassChangedToFinal() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(ClassChangedToFinal.class, "**/PublicClassToFinal.class");
-        reporter.assertContains(Level.ERROR, "com/googlecode/japi/checker/tests/PublicClassToFinal: the class has been made final, this breaks inheritance.");
+        reporter.assertContains(Level.ERROR, "The class com/googlecode/japi/checker/tests/PublicClassToFinal has been made final, this breaks inheritance.");
         assertEquals(1, reporter.count(Level.ERROR));
     }
  
     @Test
-    public void testCheckInheritanceChanges() throws InstantiationException, IllegalAccessException {
+    public void testCheckInheritanceChanges() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(CheckInheritanceChanges.class, "**/CheckInheritanceChanges.class");
-        reporter.assertContains(Level.ERROR, "com/googlecode/japi/checker/tests/CheckInheritanceChanges: extends java/util/ArrayList and not java/util/Vector anymore.");
-        reporter.assertContains(Level.ERROR, "com/googlecode/japi/checker/tests/CheckInheritanceChanges: is not implementing java/io/Serializable anymore.");
+        reporter.assertContains(Level.ERROR, "extends java/util/ArrayList and not java/util/Vector anymore.");
+        reporter.assertContains(Level.ERROR, "is not implementing java/io/Serializable anymore.");
         assertEquals(2, reporter.count(Level.ERROR));
     }
     
     @Test
-    public void testCheckRemovedMethod() throws InstantiationException, IllegalAccessException {
+    public void testCheckRemovedMethod() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(CheckRemovedMethod.class, "**/CheckRemovedMethod.class");
-        reporter.assertContains(Level.ERROR, "com/googlecode/japi/checker/tests/CheckRemovedMethod: Could not find method publicMethodRemoved in newer version.");
-        reporter.assertContains(Level.ERROR, "com/googlecode/japi/checker/tests/CheckRemovedMethod: Could not find method protectedMethodRemoved in newer version.");
+        reporter.assertContains(Level.ERROR, "Could not find method publicMethodRemoved in newer version.");
+        reporter.assertContains(Level.ERROR, "Could not find method protectedMethodRemoved in newer version.");
         assertEquals(2, reporter.count(Level.ERROR));
     }
     
     @Test
-    public void testCheckMethodException() throws InstantiationException, IllegalAccessException {
+    public void testCheckMethodException() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(CheckMethodException.class, "**/CheckMethodException.class");
         reporter.assertContains(Level.ERROR, "publicAddedException is now throwing java/lang/Exception.");
         reporter.assertContains(Level.ERROR, "protectedAddedException is now throwing java/lang/Exception.");
@@ -154,31 +183,31 @@ public class TestBCChecker {
     }
     
     @Test
-    public void testCheckerInnerClassRemoved() throws InstantiationException, IllegalAccessException {
+    public void testCheckerInnerClassRemoved() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(null, "**/InnerClassRemoved*.class");
         assertEquals(4, reporter.count(Level.ERROR));
         //reporter.assertContains(Level.ERROR, "Public class com/googlecode/japi/checker/tests/RemovedClass has been removed.");
     }
 
     @Test
-    public void testCheckMethodChangedToFinal() throws InstantiationException, IllegalAccessException {
+    public void testCheckMethodChangedToFinal() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(CheckMethodChangedToFinal.class, "**/CheckMethodAccess.class");
-        reporter.assertContains(Level.ERROR, "com/googlecode/japi/checker/tests/CheckMethodAccess: the method publicToFinal has been made final, this now prevents overriding.");
-        reporter.assertContains(Level.ERROR, "com/googlecode/japi/checker/tests/CheckMethodAccess: the method protectedToFinal has been made final, this now prevents overriding.");
+        reporter.assertContains(Level.ERROR, "The method publicToFinal has been made final, this now prevents overriding.");
+        reporter.assertContains(Level.ERROR, "The method protectedToFinal has been made final, this now prevents overriding.");
         assertEquals(2, reporter.count(Level.ERROR));
     }
 
     @Test
-    public void testCheckMethodChangedToStatic() throws InstantiationException, IllegalAccessException {
+    public void testCheckMethodChangedToStatic() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(CheckMethodChangedToStatic.class, "**/CheckMethodAccess.class");
-        reporter.assertContains(Level.ERROR, "com/googlecode/japi/checker/tests/CheckMethodAccess: the method publicToStatic has been made static.");
-        reporter.assertContains(Level.ERROR, "com/googlecode/japi/checker/tests/CheckMethodAccess: the method protectedToStatic has been made static.");
-        reporter.assertContains(Level.ERROR, "com/googlecode/japi/checker/tests/CheckMethodAccess: the method publicFromStatic is not static anymore.");
-        reporter.assertContains(Level.ERROR, "com/googlecode/japi/checker/tests/CheckMethodAccess: the method protectedFromStatic is not static anymore");
+        reporter.assertContains(Level.ERROR, "The method publicToStatic has been made static.");
+        reporter.assertContains(Level.ERROR, "The method protectedToStatic has been made static.");
+        reporter.assertContains(Level.ERROR, "The method publicFromStatic is not static anymore.");
+        reporter.assertContains(Level.ERROR, "The method protectedFromStatic is not static anymore");
         assertEquals(4, reporter.count(Level.ERROR));
     }
 
-    public BasicReporter check(Class<? extends Rule> clazz, String ... includes) throws InstantiationException, IllegalAccessException {
+    public BasicReporter check(Class<? extends Rule> clazz, String ... includes) throws InstantiationException, IllegalAccessException, IOException {
         BCChecker checker = new BCChecker(reference, newVersion);
         BasicReporter reporter = new BasicReporter();
         List<Rule> rules = new ArrayList<Rule>();
@@ -195,21 +224,21 @@ public class TestBCChecker {
     }
     
     public static class BasicReporter implements Reporter {
-        List<Message> messages = new ArrayList<Message>();
+        List<Report> messages = new ArrayList<Report>();
         
         @Override
-        public void report(Level level, String message) {
-            System.out.println(level.toString() + ": " + message);
-            messages.add(new Message(level, message));
+        public void report(Report report) {
+            System.out.println(report.level.toString() + ": " + report.message);
+            messages.add(report);
         }
         
-        public List<Message> getMessages() {
+        public List<Report> getMessages() {
             return messages;
         }
 
         public int count(Level level) {
             int count = 0;
-            for (Message message : messages) {
+            for (Report message : messages) {
                 if (message.level == level) {
                     count++;
                 }
@@ -218,22 +247,14 @@ public class TestBCChecker {
         }
         
         public void assertContains(Level level, String str) {
-            for (Message message : messages) {
+            for (Report message : messages) {
                 if (message.level == level && message.message.contains(str)) {
                     return;
                 }
             }
             fail("Could not find message containing: " + str);
         }
-        
-        class Message {
-            public Level level;
-            public String message;
-            public Message(Level level, String message) {
-                this.level = level;
-                this.message = message;
-            }
-        }
+
     }
 
 }

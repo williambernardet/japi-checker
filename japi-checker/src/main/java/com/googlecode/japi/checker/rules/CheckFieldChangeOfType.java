@@ -17,6 +17,7 @@ package com.googlecode.japi.checker.rules;
 
 import com.googlecode.japi.checker.Reporter;
 import com.googlecode.japi.checker.Reporter.Level;
+import com.googlecode.japi.checker.Reporter.Report;
 import com.googlecode.japi.checker.model.FieldData;
 import com.googlecode.japi.checker.model.JavaItem;
 import com.googlecode.japi.checker.Rule;
@@ -29,10 +30,10 @@ public class CheckFieldChangeOfType implements Rule {
             JavaItem reference, JavaItem newItem) {
         if (reference instanceof FieldData) {
             if (!((FieldData) reference).hasSameType((FieldData) newItem) && reference.getVisibility() != Scope.PRIVATE) {
-                reporter.report(Level.ERROR, reference.getType() + " " + reference.getName() +
+                reporter.report(new Report(Level.ERROR, "The " + reference.getType() + " " + reference.getName() +
                         " has been modified from " + 
                         ((FieldData) reference).getDescriptor() + " to "+
-                        ((FieldData) newItem).getDescriptor());
+                        ((FieldData) newItem).getDescriptor(), reference, newItem));
             }
         }
     }

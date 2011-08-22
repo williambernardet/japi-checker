@@ -19,6 +19,7 @@ import com.googlecode.japi.checker.Reporter;
 import com.googlecode.japi.checker.Rule;
 import com.googlecode.japi.checker.Scope;
 import com.googlecode.japi.checker.Reporter.Level;
+import com.googlecode.japi.checker.Reporter.Report;
 import com.googlecode.japi.checker.model.JavaItem;
 import com.googlecode.japi.checker.model.MethodData;
 
@@ -33,12 +34,12 @@ public class CheckMethodException implements Rule {
             MethodData newMethod = (MethodData)newItem;
             for (String exception : referenceMethod.getExceptions()) {
                 if (!newMethod.getExceptions().contains(exception)) {
-                    reporter.report(Level.ERROR, referenceMethod.getName() + " is not throwing " + exception + " anymore.");
+                    reporter.report(new Report(Level.ERROR, referenceMethod.getName() + " is not throwing " + exception + " anymore.", reference, newItem));
                 }
             }
             for (String exception : newMethod.getExceptions()) {
                 if (!referenceMethod.getExceptions().contains(exception)) {
-                    reporter.report(Level.ERROR, referenceMethod.getName() + " is now throwing " + exception + ".");
+                    reporter.report(new Report(Level.ERROR, referenceMethod.getName() + " is now throwing " + exception + ".", reference, newItem));
                 }
             }
         }

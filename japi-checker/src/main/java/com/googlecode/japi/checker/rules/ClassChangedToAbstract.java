@@ -18,6 +18,7 @@ package com.googlecode.japi.checker.rules;
 import com.googlecode.japi.checker.Reporter;
 import com.googlecode.japi.checker.Rule;
 import com.googlecode.japi.checker.Reporter.Level;
+import com.googlecode.japi.checker.Reporter.Report;
 import com.googlecode.japi.checker.model.ClassData;
 import com.googlecode.japi.checker.model.JavaItem;
 
@@ -28,7 +29,7 @@ public class ClassChangedToAbstract implements Rule {
             JavaItem reference, JavaItem newItem) {
         if (reference instanceof ClassData) {
             if (!reference.isAbstract() && newItem.isAbstract()) {
-                reporter.report(Level.ERROR, reference.getName() + ": the class has been change to be abstract.");
+                reporter.report(new Report(Level.ERROR, "The class " + reference.getName() + " has been made abstract.", reference, newItem));
             }
         }
     }

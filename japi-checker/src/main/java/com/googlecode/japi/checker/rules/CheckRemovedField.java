@@ -18,6 +18,7 @@ package com.googlecode.japi.checker.rules;
 import com.googlecode.japi.checker.Reporter;
 import com.googlecode.japi.checker.Rule;
 import com.googlecode.japi.checker.Scope;
+import com.googlecode.japi.checker.Reporter.Report;
 import com.googlecode.japi.checker.model.ClassData;
 import com.googlecode.japi.checker.model.FieldData;
 import com.googlecode.japi.checker.model.JavaItem;
@@ -39,7 +40,7 @@ public class CheckRemovedField implements Rule {
                     }
                 }
                 if (!found && oldField.getVisibility() != Scope.PRIVATE) {
-                    reporter.report(Reporter.Level.ERROR, referenceClass.getName() + ": Could not find " + oldField.getType() + " " + oldField.getName() + " in newer version.");
+                    reporter.report(new Report(Reporter.Level.ERROR, "Could not find " + oldField.getType() + " " + oldField.getName() + " in newer version.", reference, newItem));
                 }
             }
         }

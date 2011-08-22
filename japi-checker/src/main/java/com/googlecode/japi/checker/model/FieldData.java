@@ -25,7 +25,7 @@ public class FieldData extends JavaItem {
     private String signature;
     private Object value;
 
-    public FieldData(JavaItem owner, int access, String name, String descriptor, String signature, Object value) {
+    public FieldData(ClassData owner, int access, String name, String descriptor, String signature, Object value) {
         super(owner, access, name);
         this.setDescriptor(descriptor);
         this.setSignature(signature);

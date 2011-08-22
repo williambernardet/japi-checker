@@ -21,7 +21,7 @@ import com.googlecode.japi.checker.Scope;
 
 public abstract class JavaItem {
     private Scope visibility = Scope.PROTECTED;
-    private JavaItem owner;
+    private ClassData owner;
     private String name;
     private boolean isAbstract;
     private boolean isInterface;
@@ -29,7 +29,7 @@ public abstract class JavaItem {
     private boolean isStatic;
     private boolean isTransient;
 
-    protected JavaItem(JavaItem owner, int access, String name) {
+    protected JavaItem(ClassData owner, int access, String name) {
         this.setOwner(owner);
         this.setName(name);
         this.setVisibility(toScope(access));
@@ -149,14 +149,14 @@ public abstract class JavaItem {
     /**
      * @return the owner
      */
-    public JavaItem getOwner() {
+    public ClassData getOwner() {
         return owner;
     }
 
     /**
      * @param owner the owner to set
      */
-    protected void setOwner(JavaItem owner) {
+    protected void setOwner(ClassData owner) {
         this.owner = owner;
     }
 

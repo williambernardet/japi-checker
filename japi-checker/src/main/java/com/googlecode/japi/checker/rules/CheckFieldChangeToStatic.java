@@ -17,6 +17,7 @@ package com.googlecode.japi.checker.rules;
 
 import com.googlecode.japi.checker.Reporter;
 import com.googlecode.japi.checker.Reporter.Level;
+import com.googlecode.japi.checker.Reporter.Report;
 import com.googlecode.japi.checker.model.FieldData;
 import com.googlecode.japi.checker.model.JavaItem;
 import com.googlecode.japi.checker.Rule;
@@ -29,10 +30,10 @@ public class CheckFieldChangeToStatic implements Rule {
             JavaItem reference, JavaItem newItem) {
         if (reference instanceof FieldData && reference.getVisibility() != Scope.PRIVATE) {
             if (reference.isStatic() && !newItem.isStatic()) {
-                reporter.report(Level.ERROR, reference.getType() + " " + reference.getName() + " is not static anymore.");
+                reporter.report(new Report(Level.ERROR, "The " + reference.getType() + " " + reference.getName() + " is not static anymore.", reference, newItem));
             }
             if (!reference.isStatic() && newItem.isStatic()) {
-                reporter.report(Level.ERROR, reference.getType() + " " + reference.getName() + " is now static.");
+                reporter.report(new Report(Level.ERROR, "The " + reference.getType() + " " + reference.getName() + " is now static.", reference, newItem));
             }
         }
     }

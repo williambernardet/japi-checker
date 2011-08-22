@@ -27,16 +27,20 @@ public class LogReporter implements Reporter {
         this.log = log;
     }
     
-    public void report(Level level, String message) {
-        if (level == Level.ERROR) {
-            log.error(message);
-        } else if (level == Level.WARNING) {
-            log.warn(message);
-        } else if (level == Level.INFO) {
-            log.info(message);
-        } else if (level == Level.DEBUG) {
-            log.debug(message);
+    public void report(Report report) {
+        if (report.level == Level.ERROR) {
+            log.error(format(report));
+        } else if (report.level == Level.WARNING) {
+            log.warn(format(report));
+        } else if (report.level == Level.INFO) {
+            log.info(format(report));
+        } else if (report.level == Level.DEBUG) {
+            log.debug(format(report));
         }
     }
 
+    private String format(Report report) {
+        return report.source + ": " + report.message;
+    }
+    
 }

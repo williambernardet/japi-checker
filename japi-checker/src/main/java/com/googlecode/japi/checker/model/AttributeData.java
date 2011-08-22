@@ -18,7 +18,7 @@ package com.googlecode.japi.checker.model;
 
 public class AttributeData extends JavaItem {
 
-    public AttributeData(JavaItem owner, int access, String name) {
+    public AttributeData(ClassData owner, int access, String name) {
         super(owner, access, name);
     }
 

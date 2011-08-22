@@ -31,8 +31,9 @@ public class ClassData extends JavaItem {
     private String superName;
     private List<String> interfaces = new ArrayList<String>();
     private int version;
+    private String source;
 
-    public ClassData(JavaItem owner, int access, String name, String signature, String superName, String[] interfaces, int version) {
+    public ClassData(ClassData owner, int access, String name, String signature, String superName, String[] interfaces, int version) {
         super(owner, access, name);
         this.setSignature(signature);
         this.superName = superName;
@@ -190,5 +191,26 @@ public class ClassData extends JavaItem {
 
     public void add(InnerClassData clazz) {
         innerClasses.add(clazz);
+    }
+
+    /**
+     * @param source the source to set
+     */
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    /**
+     * @return the source
+     */
+    public String getSource() {
+        return source;
+    }
+    
+    public String getFilename() {
+        if (this.getName().lastIndexOf('/') != -1) {
+            return this.getName().substring(0, this.getName().lastIndexOf('/') + 1) + getSource();
+        }
+        return this.getSource();
     }
 }

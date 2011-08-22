@@ -23,9 +23,9 @@ public class MuxReporter implements Reporter {
     private List<Reporter> reporters = new ArrayList<Reporter>();
     
     @Override
-    public void report(Level level, String message) {
+    public void report(Report report) {
         for (Reporter reporter : reporters) {
-            reporter.report(level, message);
+            reporter.report(report);
         }
     }
 

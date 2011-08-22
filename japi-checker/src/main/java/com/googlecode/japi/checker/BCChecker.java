@@ -30,6 +30,7 @@ import java.util.zip.ZipInputStream;
 import org.objectweb.asm.ClassReader;
 
 import com.googlecode.japi.checker.Reporter.Level;
+import com.googlecode.japi.checker.Reporter.Report;
 import com.googlecode.japi.checker.model.ClassData;
 import com.googlecode.japi.checker.utils.AntPatternMatcher;
 
@@ -58,34 +59,30 @@ public class BCChecker {
         excludes.add(new AntPatternMatcher(exclude));
     }
     
-    public void checkBacwardCompatibility(Reporter reporter, List<Rule> rules) {
+    public void checkBacwardCompatibility(Reporter reporter, List<Rule> rules) throws IOException {
         if (rules == null) {
             rules = Collections.emptyList();
         }
-        try {
-            ClassDumper referenceDumper = new ClassDumper();
-            ClassDumper newDumper = new ClassDumper();
+        ClassDumper referenceDumper = new ClassDumper();
+        ClassDumper newDumper = new ClassDumper();
 
-            List<ClassData> referenceData = readData(reference, referenceDumper);
-            List<ClassData> newData = readData(newArtifact, newDumper);
-            for (ClassData clazz : referenceData) {
-                boolean found = false;
-                for (ClassData newClazz : newData) {
-                    if (clazz.isSame(newClazz)) {
-                        for (Rule rule : rules) {
-                            rule.checkBackwardCompatibility(reporter, clazz, newClazz);
-                        }
-                        newClazz.checkBackwardCompatibility(reporter, clazz, rules);
-                        found = true;
-                        break;
+        List<ClassData> referenceData = readData(reference, referenceDumper);
+        List<ClassData> newData = readData(newArtifact, newDumper);
+        for (ClassData clazz : referenceData) {
+            boolean found = false;
+            for (ClassData newClazz : newData) {
+                if (clazz.isSame(newClazz)) {
+                    for (Rule rule : rules) {
+                        rule.checkBackwardCompatibility(reporter, clazz, newClazz);
                     }
-                }
-                if (!found && clazz.getVisibility() == Scope.PUBLIC) {
-                    reporter.report(Level.ERROR, "Public class " + clazz.getName() + " has been removed.");
+                    newClazz.checkBackwardCompatibility(reporter, clazz, rules);
+                    found = true;
+                    break;
                 }
             }
-        } catch (IOException e) {
-            reporter.report(Level.ERROR, "Error opening jar file: " + e.getMessage());
+            if (!found && clazz.getVisibility() == Scope.PUBLIC) {
+                reporter.report(new Report(Level.ERROR, "Public class " + clazz.getName() + " has been removed.", clazz, null));
+            }
         }
     }
     

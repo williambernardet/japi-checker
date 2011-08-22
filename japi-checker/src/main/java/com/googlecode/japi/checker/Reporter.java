@@ -15,9 +15,29 @@
  */
 package com.googlecode.japi.checker;
 
+import com.googlecode.japi.checker.model.ClassData;
+import com.googlecode.japi.checker.model.JavaItem;
+
 public interface Reporter {
     public enum Level {ERROR, WARNING, INFO, DEBUG};
     
-    void report(Level level, String message);
+    void report(Report report);
+    
+    public static class Report {
+        public final Level level;
+        public final  JavaItem referenceItem;
+        public final  JavaItem newItem;
+        public final  String source;
+        public final  String message;
+        
+        public Report(Level level, String message, JavaItem referenceItem, JavaItem newItem) {
+            this.level = level;
+            this.message = message;
+            this.referenceItem = referenceItem;
+            this.newItem = newItem;
+            this.source = (referenceItem.getOwner() == null ? ((ClassData)referenceItem).getFilename() : referenceItem.getOwner().getFilename());
+        }
+        
+    }
     
 }

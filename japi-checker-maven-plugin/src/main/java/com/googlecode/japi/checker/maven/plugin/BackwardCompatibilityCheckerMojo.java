@@ -32,9 +32,9 @@ import com.googlecode.japi.checker.BCChecker;
 import com.googlecode.japi.checker.MuxReporter;
 import com.googlecode.japi.checker.Reporter;
 import com.googlecode.japi.checker.Rule;
-import com.googlecode.japi.checker.rules.ClassChangedToFinal;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,15 +121,18 @@ public class BackwardCompatibilityCheckerMojo
             ErrorCountReporter ec = new ErrorCountReporter();
             mux.add(ec);
             
-            // Running the check...
-            this.getLog().info("Checking backward compatibility of " + artifact.toString() + " against " + referenceArtifact.toString());
-            checker.checkBacwardCompatibility(mux, getRuleInstances());
-            
-            if (ec.hasError()) {
-                getLog().error("You have " + ec.getCount() + " backward compatibility issues.");
-                throw new MojoFailureException("You have " + ec.getCount() + " backward compatibility issues.");
-            } else {
-                getLog().info("No backward compatibility issue found.");
+            try {
+                // Running the check...
+                this.getLog().info("Checking backward compatibility of " + artifact.toString() + " against " + referenceArtifact.toString());
+                checker.checkBacwardCompatibility(mux, getRuleInstances());
+                if (ec.hasError()) {
+                    getLog().error("You have " + ec.getCount() + " backward compatibility issues.");
+                    throw new MojoFailureException("You have " + ec.getCount() + " backward compatibility issues.");
+                } else {
+                    getLog().info("No backward compatibility issue found.");
+                }
+            } catch (IOException e) {
+                throw new MojoExecutionException(e.getMessage(), e);
             }
         } else {
             throw new MojoExecutionException("Could not find the artifact: " + artifact.toString());
@@ -236,8 +239,8 @@ public class BackwardCompatibilityCheckerMojo
     class ErrorCountReporter implements Reporter {
         private int count;
 
-        public void report(Level level, String message) {
-            if (Level.ERROR == level) {
+        public void report(Report report) {
+            if (Level.ERROR == report.level) {
                 count++;
             }
         }

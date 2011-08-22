@@ -19,6 +19,7 @@ import com.googlecode.japi.checker.Reporter;
 import com.googlecode.japi.checker.Rule;
 import com.googlecode.japi.checker.Scope;
 import com.googlecode.japi.checker.Reporter.Level;
+import com.googlecode.japi.checker.Reporter.Report;
 import com.googlecode.japi.checker.model.JavaItem;
 import com.googlecode.japi.checker.model.MethodData;
 
@@ -30,9 +31,9 @@ public class CheckMethodChangedToStatic implements Rule {
         if (reference instanceof MethodData) {
             if (Scope.PUBLIC == reference.getVisibility() || Scope.PROTECTED == reference.getVisibility()) {
                 if (!reference.isStatic() && newItem.isStatic()) {
-                    reporter.report(Level.ERROR, reference.getOwner() + ": the method " + reference.getName() + " has been made static.");
+                    reporter.report(new Report(Level.ERROR, "The method " + reference.getName() + " has been made static.", reference, newItem));
                 } else if (reference.isStatic() && !newItem.isStatic()) {
-                    reporter.report(Level.ERROR, reference.getOwner() + ": the method " + reference.getName() + " is not static anymore.");
+                    reporter.report(new Report(Level.ERROR,  "The method " + reference.getName() + " is not static anymore.", reference, newItem));
                 }
             }
         }
