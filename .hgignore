@@ -30,3 +30,16 @@ syntax: regexp
 ^japi-checker/.settings$
 syntax: regexp
 ^\.settings$
+
+syntax: regexp
+^reference-test-jar/\.classpath$
+syntax: regexp
+^reference-test-jar/\.project$
+syntax: regexp
+^new-test-jar/\.classpath$
+syntax: regexp
+^new-test-jar/\.project$
+syntax: regexp
+^new-test-jar/\.settings$
+syntax: regexp
+^reference-test-jar/\.settings$
