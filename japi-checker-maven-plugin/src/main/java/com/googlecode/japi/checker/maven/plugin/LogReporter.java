@@ -18,6 +18,8 @@ package com.googlecode.japi.checker.maven.plugin;
 import org.apache.maven.plugin.logging.Log;
 
 import com.googlecode.japi.checker.Reporter;
+import com.googlecode.japi.checker.Reporter.Report;
+import com.googlecode.japi.checker.model.MethodData;
 
 public class LogReporter implements Reporter {
 
@@ -40,7 +42,13 @@ public class LogReporter implements Reporter {
     }
 
     private String format(Report report) {
-        return report.source + ": " + report.message;
+        return report.source + getLine(report) + ": " + report.message;
     }
     
+    private static String getLine(Report report) {
+        if (report.newItem instanceof MethodData) {
+            return "(" + ((MethodData)report.newItem).getLineNumber() + ")";
+        }
+        return "";
+    }
 }

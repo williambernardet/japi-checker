@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.googlecode.japi.checker.Reporter.Level;
+import com.googlecode.japi.checker.model.MethodData;
 import com.googlecode.japi.checker.rules.CheckChangeOfScope;
 import com.googlecode.japi.checker.rules.CheckFieldChangeOfType;
 import com.googlecode.japi.checker.rules.CheckFieldChangeToStatic;
@@ -228,8 +229,15 @@ public class TestBCChecker {
         
         @Override
         public void report(Report report) {
-            System.out.println(report.level.toString() + ": " + report.message);
+            System.out.println(report.level.toString() + ": " + report.source + getLine(report) + ": " + report.message);
             messages.add(report);
+        }
+        
+        private static String getLine(Report report) {
+            if (report.newItem instanceof MethodData) {
+                return "(" + ((MethodData)report.newItem).getLineNumber() + ")";
+            }
+            return "";
         }
         
         public List<Report> getMessages() {

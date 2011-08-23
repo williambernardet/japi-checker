@@ -26,6 +26,7 @@ public class MethodData extends JavaItem {
     private String signature;
     private String descriptor;
     private List<String> exceptions = new ArrayList<String>();
+    private int line;
     
     public MethodData(ClassData owner, int access, String name, String descriptor, String signature, String[] exceptions) {
         super(owner, access, name);
@@ -91,5 +92,13 @@ public class MethodData extends JavaItem {
      */
     public List<String> getExceptions() {
         return exceptions;
+    }
+
+    public void setLineNumber(int line) {
+        this.line = line;
+    }
+    
+    public int getLineNumber() {
+        return line;
     }
 }

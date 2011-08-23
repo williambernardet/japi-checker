@@ -72,8 +72,9 @@ public class ClassDumper implements ClassVisitor {
     public MethodVisitor visitMethod(int access, String name, String descriptor,
             String signature, String[] exceptions) {
         logger.fine("    +(m) " + name + " " + descriptor + " " + signature + " " + exceptions);
-        clazz.add(new MethodData(clazz, access, name, descriptor, signature, exceptions));
-        return null;
+        MethodData method = new MethodData(clazz, access, name, descriptor, signature, exceptions);
+        clazz.add(method);
+        return new MethodDumper(method);
     }
 
     public void visitOuterClass(String owner, String name, String desc) {
