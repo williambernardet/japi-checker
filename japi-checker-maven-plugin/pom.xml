@@ -19,9 +19,10 @@
     xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>japi-checker-pom</artifactId>
-        <groupId>com.googlecode.japi-checker</groupId>
-        <version>0.1.0-SNAPSHOT</version>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugins</artifactId>
+        <version>21</version>
+        <relativePath>../maven-plugins/pom.xml</relativePath>
     </parent>
     <groupId>com.googlecode.japi-checker</groupId>
     <artifactId>japi-checker-maven-plugin</artifactId>
@@ -46,12 +47,34 @@
     <url>http://japi-checker.googlecode.com</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <mavenVersion>2.0.6</mavenVersion>
     </properties>
+    
+    <prerequisites>
+        <maven>${mavenVersion}</maven>
+    </prerequisites>
+    
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
-            <version>2.2.1</version>
+            <version>${mavenVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-model</artifactId>
+            <version>${mavenVersion}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-artifact</artifactId>
+            <version>${mavenVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-project</artifactId>
+            <version>${mavenVersion}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -60,23 +83,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+	        <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-utils</artifactId>
+            <version>3.0</version>
+        </dependency>        
+        <dependency>
             <groupId>com.googlecode.japi-checker</groupId>
             <artifactId>japi-checker</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-artifact</artifactId>
-            <version>2.2.1</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-project</artifactId>
-            <version>2.2.1</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
         	<groupId>org.apache.maven.plugin-testing</groupId>
@@ -86,8 +101,18 @@
         	<scope>test</scope>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <target>1.6</target>
+                    <source>1.6</source>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>2.5.1</version>
@@ -100,7 +125,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <goalPrefix>japi-checker-maven-plugin</goalPrefix>
+                    <goalPrefix>japi-checker</goalPrefix>
                 </configuration>
             </plugin>
         </plugins>

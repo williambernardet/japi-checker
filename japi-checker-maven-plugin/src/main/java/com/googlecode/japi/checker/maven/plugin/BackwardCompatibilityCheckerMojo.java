@@ -19,6 +19,7 @@ package com.googlecode.japi.checker.maven.plugin;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
@@ -39,11 +40,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Goal which touches a timestamp file.
+ * Goal which check the backward compatibility between generated
+ * artifact and a reference artifact.
  *
  * @goal check
- * 
  * @phase verify
+ * @requiresDependencyResolution runtime
+ * @threadSafe
  */
 public class BackwardCompatibilityCheckerMojo
     extends AbstractMojo
@@ -75,13 +78,19 @@ public class BackwardCompatibilityCheckerMojo
      */
     private ArtifactItem reference;
 
-    /** @parameter default-value="${project}" */
+    /**
+     * @parameter expression="${project}"
+     * @readonly
+     * @required
+     */
     private MavenProject project;
 
     /**
      * Used to look up Artifacts in the remote repository.
      *
-     * @component
+     * @component role="org.apache.maven.artifact.factory.ArtifactFactory"
+     * @readonly
+     * @reauired
      */
     private ArtifactFactory factory;
     
@@ -89,12 +98,30 @@ public class BackwardCompatibilityCheckerMojo
      * Used to look up Artifacts in the remote repository.
      *
      * @component
+     * @readonly
+     * @required
      */
     private ArtifactResolver resolver;
 
-    /**@parameter default-value="${localRepository}" */
-    private org.apache.maven.artifact.repository.ArtifactRepository localRepository;
+    /**
+     * ArtifactRepository of the localRepository. To obtain the directory of localRepository in unit tests use
+     * System.setProperty( "localRepository").
+     * 
+     * @parameter expression="${localRepository}"
+     * @required
+     * @readonly
+     */
+    private ArtifactRepository localRepository;
 
+    /**
+     * List of Remote Repositories used by the resolver
+     *
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @readonly
+     * @required
+     */
+    protected List<ArtifactRepository> remoteRepos;
+    
     /**
      * {@inheritDoc}
      */
@@ -162,35 +189,39 @@ public class BackwardCompatibilityCheckerMojo
     /**
      * @return Returns the factory.
      */
-    public ArtifactFactory getFactory()
-    {
+    public ArtifactFactory getFactory() {
         return this.factory;
     }
 
     /**
      * @param factory The factory to set.
      */
-    public void setFactory( ArtifactFactory factory )
-    {
+    public void setFactory( ArtifactFactory factory ) {
         this.factory = factory;
     }
 
     /**
      * @return Returns the resolver.
      */
-    public ArtifactResolver getResolver()
-    {
+    public ArtifactResolver getResolver() {
         return this.resolver;
     }
 
     /**
      * @param resolver The resolver to set.
      */
-    public void setResolver( ArtifactResolver resolver )
-    {
+    public void setResolver(ArtifactResolver resolver) {
         this.resolver = resolver;
     }
 
+    public ArtifactRepository getLocalRepository() {
+        return localRepository;
+    }
+    
+    public void setLocalRepository(ArtifactRepository localRepository) {
+        this.localRepository = localRepository;
+    }
+    
     /**
      * Resolves the Artifact from the remote repository if necessary. If no version is specified, it will be retrieved
      * from the dependency list or from the DependencyManagement section of the pom.
@@ -218,7 +249,7 @@ public class BackwardCompatibilityCheckerMojo
                                                   artifactItem.getType(), null, Artifact.SCOPE_COMPILE);
 
         try {
-            getResolver().resolve(artifact, project.getRepositories(), localRepository);
+            getResolver().resolve(artifact, remoteRepos, localRepository);
         } catch ( ArtifactResolutionException e ) {
             throw new MojoExecutionException( "Unable to resolve artifact.", e );
         } catch ( ArtifactNotFoundException e ) {
