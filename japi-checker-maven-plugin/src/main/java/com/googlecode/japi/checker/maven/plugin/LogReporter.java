@@ -24,20 +24,28 @@ import com.googlecode.japi.checker.model.MethodData;
 public class LogReporter implements Reporter {
 
     private Log log;
+    private Level display = Level.WARNING;
     
+    public LogReporter(Log log, Level display) {
+        this(log);
+        this.display = display;
+    }
+
     public LogReporter(Log log) {
         this.log = log;
     }
     
     public void report(Report report) {
-        if (report.level == Level.ERROR) {
-            log.error(format(report));
-        } else if (report.level == Level.WARNING) {
-            log.warn(format(report));
-        } else if (report.level == Level.INFO) {
-            log.info(format(report));
-        } else if (report.level == Level.DEBUG) {
-            log.debug(format(report));
+        if (report.level.ordinal() <= display.ordinal()) {
+            if (report.level == Level.ERROR) {
+                log.error(format(report));
+            } else if (report.level == Level.WARNING) {
+                log.warn(format(report));
+            } else if (report.level == Level.INFO) {
+                log.info(format(report));
+            } else if (report.level == Level.DEBUG) {
+                log.debug(format(report));
+            }
         }
     }
 
