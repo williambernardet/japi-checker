@@ -29,6 +29,8 @@
     <version>0.1.0-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
     <name>japi-checker-maven-plugin Maven Plugin</name>
+    <url>http://japi-checker.googlecode.com</url>
+    
     <licenses>
         <license>
             <name>Apache License 2.0</name>
@@ -43,8 +45,14 @@
             <name>William Bernardet</name>
         </developer>
     </developers>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
 
-    <url>http://japi-checker.googlecode.com</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mavenVersion>2.0.6</mavenVersion>
