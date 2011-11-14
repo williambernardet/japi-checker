@@ -42,6 +42,7 @@ import com.googlecode.japi.checker.rules.CheckRemovedMethod;
 import com.googlecode.japi.checker.rules.ClassChangedToAbstract;
 import com.googlecode.japi.checker.rules.ClassChangedToFinal;
 import com.googlecode.japi.checker.rules.ClassChangedToInterface;
+import com.googlecode.japi.checker.rules.InterfaceChangedToClass;
 
 public class TestBCChecker {
     
@@ -102,7 +103,8 @@ public class TestBCChecker {
     @Test
     public void testClassToInterface() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(ClassChangedToInterface.class, "**/ClassToInterface.class");
-        reporter.assertContains(Level.ERROR, "The class has been change into an interface.");
+        assertEquals(1, reporter.count(Level.ERROR));
+        reporter.assertContains(Level.ERROR, "The interface com/googlecode/japi/checker/tests/ClassToInterface has been changed into an class.");
     }
 
     @Test
@@ -206,6 +208,13 @@ public class TestBCChecker {
         reporter.assertContains(Level.ERROR, "The method publicFromStatic is not static anymore.");
         reporter.assertContains(Level.ERROR, "The method protectedFromStatic is not static anymore");
         assertEquals(4, reporter.count(Level.ERROR));
+    }
+
+    @Test
+    public void testCheckInterfaceChangedToClass() throws InstantiationException, IllegalAccessException, IOException {
+        BasicReporter reporter = check(InterfaceChangedToClass.class, "**/InterfaceToClass.class");
+        assertEquals(1, reporter.count(Level.ERROR));
+        reporter.assertContains(Level.ERROR, "The class com/googlecode/japi/checker/tests/InterfaceToClass has been change into an interface.");
     }
 
     public BasicReporter check(Class<? extends Rule> clazz, String ... includes) throws InstantiationException, IllegalAccessException, IOException {
