@@ -43,3 +43,8 @@ syntax: regexp
 ^new-test-jar/\.settings$
 syntax: regexp
 ^reference-test-jar/\.settings$
+syntax: regexp
+^bin$
+syntax: regexp
+^temp$
+
