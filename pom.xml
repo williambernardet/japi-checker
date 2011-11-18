@@ -50,6 +50,10 @@
         </snapshotRepository>
     </distributionManagement>
     
+    <scm>
+    	<connection>scm:hg:https://code.google.com/p/japi-checker</connection>
+    	<developerConnection>scm:hg:https://code.google.com/p/japi-checker</developerConnection>
+    </scm>
     <build>
         <plugins>
             <plugin>
