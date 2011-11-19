@@ -18,6 +18,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.googlecode.japi-checker</groupId>
 	<artifactId>japi-checker-pom</artifactId>
+	<name>JAPI Checker POM</name>
 	<version>0.1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <licenses>
@@ -26,6 +27,9 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
     </licenses>
+    <description>Top level POM file for the JAPI Checker project.</description>
+    <url>http://japi-checker.googlecode.com</url>
+    <inceptionYear>2011</inceptionYear>
     <developers>
         <developer>
             <id>william.bernardet</id>
@@ -57,6 +61,7 @@
     <scm>
     	<connection>scm:hg:https://code.google.com/p/japi-checker</connection>
     	<developerConnection>scm:hg:https://code.google.com/p/japi-checker</developerConnection>
+    	<url>https://code.google.com/p/japi-checker</url>
     </scm>
     <build>
         <plugins>
