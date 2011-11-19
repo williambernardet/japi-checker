@@ -69,16 +69,6 @@
                     <source>1.6</source>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.1</version>
-                <configuration>
-                    <tagBase/>
-                    <goals>deploy</goals>
-                    <useReleaseProfile>true</useReleaseProfile>
-                    <arguments/>
-              </configuration>
-            </plugin>
         </plugins>
     </build>
     
