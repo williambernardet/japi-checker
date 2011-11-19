@@ -19,14 +19,14 @@
     xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugins</artifactId>
-        <version>21</version>
-        <relativePath>../maven-plugins/pom.xml</relativePath>
+        <artifactId>japi-checker-pom</artifactId>
+        <groupId>com.googlecode.japi-checker</groupId>
+        <version>0.1.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <groupId>com.googlecode.japi-checker</groupId>
     <artifactId>japi-checker-maven-plugin</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.1-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
     <name>japi-checker-maven-plugin Maven Plugin</name>
     <url>http://japi-checker.googlecode.com</url>
@@ -46,6 +46,10 @@
         </developer>
     </developers>
     <distributionManagement>
+        <repository>
+            <id>sonatype-nexus</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
         <snapshotRepository>
             <id>sonatype-nexus-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
@@ -122,6 +126,18 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>2.5.1</version>
                 <executions>
@@ -136,6 +152,39 @@
                     <goalPrefix>japi-checker</goalPrefix>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.4.3</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <id>ensure-no-container-api</id>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>org.codehaus.plexus:plexus-component-api</exclude>
+                                    </excludes>
+                                    <message>The new containers are not
+                                        supported. You probably added a
+                                        dependency that is missing the
+                                        exclusions.</message>
+                                </bannedDependencies>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 </project>
