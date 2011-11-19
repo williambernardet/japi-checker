@@ -143,6 +143,8 @@
                 <version>2.1</version>
                 <configuration>
                     <goals>deploy</goals>
+                    <arguments></arguments>
+                    <useReleaseProfile>true</useReleaseProfile>
               </configuration>
             </plugin>
         </plugins>
