@@ -47,4 +47,6 @@ syntax: regexp
 ^bin$
 syntax: regexp
 ^temp$
+syntax: regexp
+^.DS_store$
 
