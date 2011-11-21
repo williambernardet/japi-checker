@@ -80,7 +80,7 @@
                 <version>2.2.1</version>
                 <configuration>
                     <goals>deploy</goals>
-                    <arguments>-Prelease</arguments>
+                    <arguments>-Prelease -Dgpg.passphrase=${gpg.passphrase}</arguments>
                 </configuration>
             </plugin>
         </plugins>
