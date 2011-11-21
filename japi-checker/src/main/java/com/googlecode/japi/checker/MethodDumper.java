@@ -1,5 +1,7 @@
 package com.googlecode.japi.checker;
 
+import java.util.logging.Logger;
+
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Label;
@@ -8,6 +10,7 @@ import org.objectweb.asm.MethodVisitor;
 import com.googlecode.japi.checker.model.MethodData;
 
 public class MethodDumper implements MethodVisitor {
+    private Logger logger = Logger.getLogger(MethodDumper.class.getName());
     private final MethodData method;
     
     public MethodDumper(MethodData method) {
@@ -71,6 +74,7 @@ public class MethodDumper implements MethodVisitor {
 
     @Override
     public void visitLineNumber(int line, Label start) {
+        logger.fine("       @" + line);
         method.setLineNumber(line);
     }
 
