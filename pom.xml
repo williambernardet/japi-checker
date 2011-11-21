@@ -101,6 +101,9 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                                <configuration>
+                                    <keyname>william.bernardet@gmail.com</keyname>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
