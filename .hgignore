@@ -48,5 +48,5 @@ syntax: regexp
 syntax: regexp
 ^temp$
 syntax: regexp
-^.DS_store$
+^([^/]+/)*\\.DS_store$
 
