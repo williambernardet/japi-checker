@@ -1,13 +1,15 @@
 syntax: regexp
-^japi-checker-maven-plugin/target$
+^japi-checker-maven-plugin/target(/.+)?$
 syntax: regexp
-^new-test-jar/target$
+^new-test-jar/target(/.+)?$
 syntax: regexp
-^reference-test-jar/target$
+^reference-test-jar/target(/.+)?$
 syntax: regexp
-^japi-checker-maven-plugin/target$
+^japi-checker-maven-plugin/target(/.+)?$
 syntax: regexp
-^japi-checker/target$
+^japi-checker/target(/.+)?$
+syntax: regexp
+^target(/.+)?$
 syntax: regexp
 ^.classpath$
 syntax: regexp
