@@ -39,6 +39,8 @@ public class AllRules implements Rule {
         rules.add(new ClassChangedToFinal());
         rules.add(new ClassChangedToInterface());
         rules.add(new CheckMethodChangedToFinal());
+        rules.add(new ClassChangedToInterface());
+        rules.add(new InterfaceChangedToClass());
     }
     
     @Override
