@@ -29,11 +29,13 @@ public class CheckFieldChangeToStatic implements Rule {
     public void checkBackwardCompatibility(Reporter reporter,
             JavaItem reference, JavaItem newItem) {
         if (reference instanceof FieldData && reference.getVisibility() != Scope.PRIVATE) {
-            if (reference.isStatic() && !newItem.isStatic()) {
-                reporter.report(new Report(Level.ERROR, "The " + reference.getType() + " " + reference.getName() + " is not static anymore.", reference, newItem));
-            }
-            if (!reference.isStatic() && newItem.isStatic()) {
-                reporter.report(new Report(Level.ERROR, "The " + reference.getType() + " " + reference.getName() + " is now static.", reference, newItem));
+            if (reference.getOwner().getVisibility() == Scope.PUBLIC || reference.getOwner().getVisibility() == Scope.PROTECTED) {
+                if (reference.isStatic() && !newItem.isStatic()) {
+                    reporter.report(new Report(Level.ERROR, "The " + reference.getType() + " " + reference.getName() + " is not static anymore.", reference, newItem));
+                }
+                if (!reference.isStatic() && newItem.isStatic()) {
+                    reporter.report(new Report(Level.ERROR, "The " + reference.getType() + " " + reference.getName() + " is now static.", reference, newItem));
+                }
             }
         }
     }

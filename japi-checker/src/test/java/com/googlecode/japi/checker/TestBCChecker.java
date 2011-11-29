@@ -122,8 +122,8 @@ public class TestBCChecker {
     }
 
     @Test
-    public void testCheckChangeOfScopeForField() throws InstantiationException, IllegalAccessException, IOException {
-        BasicReporter reporter = check(CheckChangeOfScope.class, "**/FieldTestCases.class");
+    public void testCheckChangeOfScopeForFieldPublicScope() throws InstantiationException, IllegalAccessException, IOException {
+        BasicReporter reporter = check(CheckChangeOfScope.class, "**/PublicScopeFieldTestCases.class");
         reporter.assertContains(Level.ERROR, "The visibility of the testChangeOfScopeFromPublicToProtected field has been changed from PUBLIC to PROTECTED");
         reporter.assertContains(Level.ERROR, "The visibility of the testChangeOfScopeFromPublicToPrivate field has been changed from PUBLIC to PRIVATE");
         reporter.assertContains(Level.ERROR, "The visibility of the testChangeOfScopeFromProtectedToPrivate field has been changed from PROTECTED to PRIVATE");
@@ -133,23 +133,42 @@ public class TestBCChecker {
         assertEquals(3, reporter.count(Level.ERROR));
         assertEquals(3, reporter.count(Level.WARNING));
     }
+    
+    @Test
+    public void testCheckChangeOfScopeForFieldPackageScope() throws InstantiationException, IllegalAccessException, IOException {
+        BasicReporter reporter = check(CheckChangeOfScope.class, "**/PackageScopeFieldTestCases.class");
+        assertEquals(0, reporter.count(Level.ERROR));
+        assertEquals(0, reporter.count(Level.WARNING));
+    }
 
     @Test
-    public void testCheckFieldChangeOfType() throws InstantiationException, IllegalAccessException, IOException {
-        BasicReporter reporter = check(CheckFieldChangeOfType.class, "**/FieldTestCases.class");
+    public void testCheckFieldChangeOfTypePublicClass() throws InstantiationException, IllegalAccessException, IOException {
+        BasicReporter reporter = check(CheckFieldChangeOfType.class, "**/PublicScopeFieldTestCases.class");
         reporter.assertContains(Level.ERROR, "field testChangeOfTypePublic has been modified from Ljava/lang/String; to Ljava/lang/Boolean;");
         reporter.assertContains(Level.ERROR, "field testChangeOfTypeProtected has been modified from Ljava/lang/String; to Ljava/lang/Boolean;");
         assertEquals(2, reporter.count(Level.ERROR));
     }
 
     @Test
-    public void testCheckFieldChangeToStatic() throws InstantiationException, IllegalAccessException, IOException {
-        BasicReporter reporter = check(CheckFieldChangeToStatic.class, "**/FieldTestCases.class");
+    public void testCheckFieldChangeOfTypePackageClass() throws InstantiationException, IllegalAccessException, IOException {
+        BasicReporter reporter = check(CheckFieldChangeOfType.class, "**/PackageScopeFieldTestCases.class");
+        assertEquals(0, reporter.count(Level.ERROR));
+    }
+
+    @Test
+    public void testCheckFieldChangeToStaticPublicScope() throws InstantiationException, IllegalAccessException, IOException {
+        BasicReporter reporter = check(CheckFieldChangeToStatic.class, "**/PublicScopeFieldTestCases.class");
         reporter.assertContains(Level.ERROR, "The field testPublicChangeToStatic is now static.");
         reporter.assertContains(Level.ERROR, "The field testProtectedChangeToStatic is now static.");
         reporter.assertContains(Level.ERROR, "The field testPublicChangeFromStatic is not static anymore.");
         reporter.assertContains(Level.ERROR, "The field testProtectedChangeFromStatic is not static anymore.");
         assertEquals(4, reporter.count(Level.ERROR));
+    }
+
+    @Test
+    public void testCheckFieldChangeToStaticPackageScope() throws InstantiationException, IllegalAccessException, IOException {
+        BasicReporter reporter = check(CheckFieldChangeToStatic.class, "**/PackageScopeFieldTestCases.class");
+        assertEquals(0, reporter.count(Level.ERROR));
     }
 
     @Test

@@ -15,7 +15,7 @@
  */
 package com.googlecode.japi.checker.tests;
 
-public class FieldTestCases {
+public class PublicScopeFieldTestCases {
     // change of type
     public Boolean testChangeOfTypePublic;
     protected Boolean testChangeOfTypeProtected;
