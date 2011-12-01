@@ -34,6 +34,7 @@ import com.googlecode.japi.checker.model.MethodData;
 import com.googlecode.japi.checker.rules.CheckChangeOfScope;
 import com.googlecode.japi.checker.rules.CheckFieldChangeOfType;
 import com.googlecode.japi.checker.rules.CheckFieldChangeToStatic;
+import com.googlecode.japi.checker.rules.CheckFieldChangeToTransient;
 import com.googlecode.japi.checker.rules.CheckInheritanceChanges;
 import com.googlecode.japi.checker.rules.CheckMethodChangedToFinal;
 import com.googlecode.japi.checker.rules.CheckMethodChangedToStatic;
@@ -165,6 +166,20 @@ public class TestBCChecker {
         assertEquals(4, reporter.count(Level.ERROR));
     }
 
+    @Test
+    public void testCheckFieldChangeToTransientPublicScope() throws InstantiationException, IllegalAccessException, IOException {
+        BasicReporter reporter = check(CheckFieldChangeToTransient.class, "**/PublicScopeFieldTestCases.class");
+        reporter.assertContains(Level.WARNING, "The field publicNotTransientToTransient is now transient.");
+        reporter.assertContains(Level.WARNING, "The field protectedNotTransientToTransient is now transient.");
+        reporter.assertContains(Level.WARNING, "The field privateNotTransientToTransient is now transient.");
+        reporter.assertContains(Level.ERROR, "The field publicTransientToNoTransient is not transient anymore.");
+        reporter.assertContains(Level.ERROR, "The field protectedTransientToNoTransient is not transient anymore.");
+        reporter.assertContains(Level.ERROR, "The field privateTransientToNoTransient is not transient anymore.");
+        assertEquals(3, reporter.count(Level.WARNING));
+        assertEquals(3, reporter.count(Level.ERROR));
+    }
+
+    
     @Test
     public void testCheckFieldChangeToStaticPackageScope() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(CheckFieldChangeToStatic.class, "**/PackageScopeFieldTestCases.class");

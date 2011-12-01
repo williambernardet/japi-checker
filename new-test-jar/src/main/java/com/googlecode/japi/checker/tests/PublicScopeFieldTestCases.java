@@ -45,5 +45,12 @@ public class PublicScopeFieldTestCases {
     private final String privateFinalToNoFinal = "";
     private String privateNotfinalToFinal = "";
 
+    // transient
+    public String publicTransientToNoTransient = "";
+    public transient String publicNotTransientToTransient = "";
+    protected String protectedTransientToNoTransient = "";
+    protected transient String protectedNotTransientToTransient = "";
+    private String privateTransientToNoTransient = "";
+    private transient String privateNotTransientToTransient = "";
     
 }
