@@ -41,11 +41,13 @@ public class BCChecker {
     private List<AntPatternMatcher> excludes = new ArrayList<AntPatternMatcher>();
     
     public BCChecker(File reference, File newArtifact) {
-        if (!reference.isDirectory() && !reference.getName().toLowerCase().endsWith(".jar")) {
-            throw new IllegalArgumentException("must be a jar file");
+        if (!reference.isDirectory() && !isArchive(reference)) {
+            throw new IllegalArgumentException("reference must be either a directory" +
+                    " or a jar (or a zip kind of archive) file");
         }
-        if (!reference.isDirectory() && !newArtifact.getName().toLowerCase().endsWith(".jar")) {
-            throw new IllegalArgumentException("must be a jar file");
+        if (!newArtifact.isDirectory() && !isArchive(newArtifact)) {
+            throw new IllegalArgumentException("new artifact must be either a directory" + 
+                    " or a jar (or a zip kind of archive) file");
         }
         this.reference = reference;
         this.newArtifact = newArtifact;
@@ -150,5 +152,24 @@ public class BCChecker {
             }
         }
         return included;
+    }
+    
+    private boolean isArchive(File file) {
+        ZipInputStream zis = null;
+        try {
+            zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(file)));
+            zis.getNextEntry(); // trying to read an entry
+        } catch (IOException e) {
+            return false;
+        } finally {
+            if (zis != null) {
+                try {
+                zis.close();
+                } catch (IOException e) {
+                    // swallow the exception...
+                }
+            }
+        }
+        return true;
     }
 }

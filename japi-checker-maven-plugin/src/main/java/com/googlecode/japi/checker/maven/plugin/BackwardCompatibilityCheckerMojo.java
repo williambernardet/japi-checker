@@ -129,9 +129,6 @@ public class BackwardCompatibilityCheckerMojo
         if (artifact == null) {
             throw new MojoExecutionException("Artifact is null.");
         }
-        if (!"jar".equals(artifact.getType())) {
-            throw new MojoExecutionException("The artifact is not of type jar.");
-        }
         
         if (artifact.getFile() != null && artifact.getFile().exists()) {
             
