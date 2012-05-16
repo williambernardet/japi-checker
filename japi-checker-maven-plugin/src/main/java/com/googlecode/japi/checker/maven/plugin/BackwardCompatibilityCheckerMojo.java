@@ -136,16 +136,16 @@ public class BackwardCompatibilityCheckerMojo
             updateArtifact(reference);
             Artifact referenceArtifact = reference.getArtifact();
 
-            // Creating a new checker which compare the generated artifact against the provided reference.
-            BCChecker checker = new BCChecker(referenceArtifact.getFile(), artifact.getFile());
-
-            // configuring the reporting redirection
-            MuxReporter mux = new MuxReporter();
-            mux.add(new LogReporter(this.getLog()));
-            ErrorCountReporter ec = new ErrorCountReporter();
-            mux.add(ec);
-            
             try {
+                // Creating a new checker which compare the generated artifact against the provided reference.
+                BCChecker checker = new BCChecker(referenceArtifact.getFile(), artifact.getFile());
+
+                // configuring the reporting redirection
+                MuxReporter mux = new MuxReporter();
+                mux.add(new LogReporter(this.getLog()));
+                ErrorCountReporter ec = new ErrorCountReporter();
+                mux.add(ec);
+            
                 // Running the check...
                 this.getLog().info("Checking backward compatibility of " + artifact.toString() + " against " + referenceArtifact.toString());
                 checker.checkBacwardCompatibility(mux, getRuleInstances());
@@ -156,6 +156,8 @@ public class BackwardCompatibilityCheckerMojo
                     getLog().info("No backward compatibility issue found.");
                 }
             } catch (IOException e) {
+                throw new MojoExecutionException(e.getMessage(), e);
+            } catch (IllegalArgumentException e) {
                 throw new MojoExecutionException(e.getMessage(), e);
             }
         } else {

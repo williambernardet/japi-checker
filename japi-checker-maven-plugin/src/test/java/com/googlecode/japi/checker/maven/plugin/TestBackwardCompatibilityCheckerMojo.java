@@ -48,6 +48,12 @@ public class TestBackwardCompatibilityCheckerMojo extends AbstractMojoTestCase {
         setVariableValueToObject(mojo, "localRepository", localRepository);
     }
     
+    /**
+     * Identity check should not fail.
+     * @throws MojoExecutionException
+     * @throws IllegalAccessException
+     * @throws MojoFailureException
+     */
     public void testValidationWithSameJar() throws MojoExecutionException, IllegalAccessException, MojoFailureException {
         ArtifactStub artifact = new ArtifactStub();
         artifact.setGroupId(mojo.getProject().getGroupId());
@@ -61,6 +67,12 @@ public class TestBackwardCompatibilityCheckerMojo extends AbstractMojoTestCase {
         mojo.execute();
     }
     
+    /**
+     * Backward compatibility breaks must fail maven.
+     * @throws MojoExecutionException
+     * @throws IllegalAccessException
+     * @throws MojoFailureException
+     */
     public void testValidationWithNewJar() throws MojoExecutionException, IllegalAccessException, MojoFailureException {
         
         ArtifactStub artifact = new ArtifactStub();
@@ -78,7 +90,56 @@ public class TestBackwardCompatibilityCheckerMojo extends AbstractMojoTestCase {
             fail("The validation must fail.");
         } catch (MojoFailureException e) {
             // should be there
+            assertTrue("You have 2 backward compatibility issues.".equals(e.getMessage()));
         }
 
     }
+
+    /**
+     * Content of the war is the same as the reference one, we just want to make sure it is loaded
+     * properly even if the extension is not a war.
+     * @throws MojoExecutionException
+     * @throws IllegalAccessException
+     * @throws MojoFailureException
+     */
+    public void testValidationWithWar() throws MojoExecutionException, IllegalAccessException, MojoFailureException {
+        ArtifactStub artifact = new ArtifactStub();
+        artifact.setGroupId(mojo.getProject().getGroupId());
+        artifact.setArtifactId(mojo.getProject().getArtifactId());
+        artifact.setVersion("0.1.1-war-SNAPSHOT");
+        artifact.setType("war");
+        artifact.setScope(Artifact.SCOPE_RUNTIME);
+        artifact.setFile(new File("src/test/repository/com/googlecode/japi-checker/reference-test-jar/0.1.1-war-SNAPSHOT/reference-test-jar-0.1.1-war-SNAPSHOT.war"));
+        mojo.getProject().setArtifact(artifact);
+        setVariableValueToObject(mojo, "artifact", artifact);
+        mojo.execute();
+    }
+
+    /**
+     * We are verifying that invalid type of archive is failing maven properly.
+     * @throws MojoExecutionException
+     * @throws IllegalAccessException
+     * @throws MojoFailureException
+     */
+    public void testValidationWithNewInvalidTypeOfFile() throws MojoExecutionException, IllegalAccessException, MojoFailureException {
+        ArtifactStub artifact = new ArtifactStub();
+        artifact.setGroupId(mojo.getProject().getGroupId());
+        artifact.setArtifactId(mojo.getProject().getArtifactId());
+        artifact.setVersion("0.1.1-invalid-SNAPSHOT");
+        artifact.setType("invalid");
+        artifact.setScope(Artifact.SCOPE_RUNTIME);
+        artifact.setFile(new File("src/test/repository/com/googlecode/japi-checker/reference-test-jar/0.1.1-invalid-SNAPSHOT/reference-test-jar-0.1.1-invalid-SNAPSHOT.invalid"));
+        mojo.getProject().setArtifact(artifact);
+        setVariableValueToObject(mojo, "artifact", artifact);
+
+        try {
+            mojo.execute();
+            fail("The validation must fail.");
+        } catch (MojoExecutionException e) {
+            // should be there
+            assertTrue(e.getMessage().contains("new artifact must be either a directory or a jar"));
+        }
+
+    }
+
 }

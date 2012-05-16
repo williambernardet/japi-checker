@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import org.objectweb.asm.ClassReader;
@@ -155,21 +156,21 @@ public class BCChecker {
     }
     
     private boolean isArchive(File file) {
-        ZipInputStream zis = null;
+        ZipFile zf = null;
         try {
-            zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(file)));
-            zis.getNextEntry(); // trying to read an entry
+            zf = new ZipFile(file);
+            zf.entries(); // forcing to do something with the file.
+            return true;
         } catch (IOException e) {
             return false;
         } finally {
-            if (zis != null) {
+            if (zf != null) {
                 try {
-                zis.close();
+                    zf.close();
                 } catch (IOException e) {
                     // swallow the exception...
                 }
             }
         }
-        return true;
     }
 }
