@@ -16,6 +16,8 @@
 package com.googlecode.japi.checker.maven.plugin;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -26,27 +28,47 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import org.codehaus.plexus.util.FileUtils;
 
 public class TestBackwardCompatibilityCheckerMojo extends AbstractMojoTestCase {
     private BackwardCompatibilityCheckerMojo mojo;
+    private File localRepositoryPath;
     
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        prepareRepository();
         ArtifactRepositoryLayout localRepositoryLayout = (ArtifactRepositoryLayout) lookup( ArtifactRepositoryLayout.ROLE, "default" );
-        String path = "src/test/repository";
-        ArtifactRepository localRepository = new DefaultArtifactRepository( "local", "file://" + new File( path ).getAbsolutePath(), localRepositoryLayout );
+        ArtifactRepository localRepository = new DefaultArtifactRepository( "local", "file://" + localRepositoryPath.getAbsolutePath(), localRepositoryLayout );
                 
         mojo = (BackwardCompatibilityCheckerMojo)this.lookupMojo("check",
                 new File("target/test-classes/unit/plugin-config.xml"));
         MavenProjectStub project = new MavenProjectStub();
+        project.setCompileArtifacts(Collections.EMPTY_LIST);
         project.setGroupId("com.googlecode.japi-checker");
         project.setArtifactId("reference-test-jar");
         project.setVersion("0.1.1-SNAPSHOT");
-
+        
         setVariableValueToObject(mojo, "project", project);
         setVariableValueToObject(mojo, "localRepository", localRepository);
     }
+    
+    @Override
+    protected void tearDown() throws Exception {
+        try {
+            super.tearDown();
+        } finally {
+            FileUtils.deleteDirectory(localRepositoryPath);
+        }
+    }
+    
+    private void prepareRepository() throws IOException {
+        localRepositoryPath = File.createTempFile("repository_", "_dir", new File("target"));
+        localRepositoryPath.delete();
+        localRepositoryPath.mkdirs();
+        FileUtils.copyDirectoryStructure(new File("src/test/repository"), localRepositoryPath);
+    }
+        
     
     /**
      * Identity check should not fail.
@@ -141,5 +163,5 @@ public class TestBackwardCompatibilityCheckerMojo extends AbstractMojoTestCase {
         }
 
     }
-
+    
 }

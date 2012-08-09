@@ -22,11 +22,10 @@
         <version>0.1.4-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <groupId>com.googlecode.japi-checker</groupId>
     <artifactId>japi-checker-maven-plugin</artifactId>
     <version>0.1.4-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
-    <name>japi-checker-maven-plugin Maven Plugin</name>
+    <name>JAPI-Checker Maven Plugin</name>
     <url>http://japi-checker.googlecode.com</url>
     
     <licenses>
@@ -57,7 +56,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mavenVersion>2.0.6</mavenVersion>
+        <mavenVersion>2.2.1</mavenVersion>
     </properties>
     
     <prerequisites>
@@ -109,6 +108,25 @@
         	<version>1.2</version>
         	<type>jar</type>
         	<scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-dependency-tree</artifactId>
+            <version>1.2</version>
+        </dependency>
+            <dependency>
+            <groupId>com.googlecode.japi-checker</groupId>
+            <artifactId>reference-test-jar</artifactId>
+            <version>0.1.4-SNAPSHOT</version>
+            <scope>test</scope>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.japi-checker</groupId>
+            <artifactId>new-test-jar</artifactId>
+            <version>0.1.4-SNAPSHOT</version>
+            <scope>test</scope>
+            <type>jar</type>
         </dependency>
     </dependencies>
 
@@ -182,7 +200,8 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
+    
+ 
 </project>

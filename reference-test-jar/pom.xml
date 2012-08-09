@@ -54,4 +54,8 @@
     </build>
     
     
+    <properties>
+        <findbugs.skip>true</findbugs.skip>
+    </properties>
+    <name>JAPI-Checker reference test artifact</name>
 </project>

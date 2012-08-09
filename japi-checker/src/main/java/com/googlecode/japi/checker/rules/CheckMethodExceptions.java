@@ -23,7 +23,7 @@ import com.googlecode.japi.checker.Reporter.Report;
 import com.googlecode.japi.checker.model.JavaItem;
 import com.googlecode.japi.checker.model.MethodData;
 
-public class CheckMethodException implements Rule {
+public class CheckMethodExceptions implements Rule {
 
 
     @Override

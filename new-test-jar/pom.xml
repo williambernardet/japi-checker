@@ -39,4 +39,8 @@
         </developer>
     </developers>
 
+    <properties>
+        <findbugs.skip>true</findbugs.skip>
+    </properties>
+    <name>JAPI-Checker test artifact</name>
 </project>

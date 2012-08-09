@@ -15,20 +15,12 @@
  */
 package com.googlecode.japi.checker;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
-
-import org.objectweb.asm.ClassReader;
 
 import com.googlecode.japi.checker.Reporter.Level;
 import com.googlecode.japi.checker.Reporter.Report;
@@ -38,10 +30,19 @@ import com.googlecode.japi.checker.utils.AntPatternMatcher;
 public class BCChecker {
     private File reference;
     private File newArtifact;
+    private List<File> referenceClasspath = new ArrayList<File>();
+    private List<File> newArtifactClasspath = new ArrayList<File>();
     private List<AntPatternMatcher> includes = new ArrayList<AntPatternMatcher>();
     private List<AntPatternMatcher> excludes = new ArrayList<AntPatternMatcher>();
+    private ClassDataLoaderFactory classDataLoaderFactory = new DefaultClassDataLoaderFactory();
     
     public BCChecker(File reference, File newArtifact) {
+        if (reference == null) {
+            throw new IllegalArgumentException("The reference parameter cannot be null.");
+        }
+        if (newArtifact == null) {
+            throw new IllegalArgumentException("The newArtifact parameter cannot be null.");
+        }
         if (!reference.isDirectory() && !isArchive(reference)) {
             throw new IllegalArgumentException("reference must be either a directory" +
                     " or a jar (or a zip kind of archive) file");
@@ -54,6 +55,14 @@ public class BCChecker {
         this.newArtifact = newArtifact;
     }
  
+    public void addToReferenceClasspath(File path) {
+        this.referenceClasspath.add(path);
+    }
+
+    public void addToNewArtifactClasspath(File path) {
+        this.newArtifactClasspath.add(path);
+    }
+    
     public void addInclude(String include) {
         includes.add(new AntPatternMatcher(include));
     }
@@ -66,11 +75,19 @@ public class BCChecker {
         if (rules == null) {
             rules = Collections.emptyList();
         }
-        ClassDumper referenceDumper = new ClassDumper();
-        ClassDumper newDumper = new ClassDumper();
 
-        List<ClassData> referenceData = readData(reference, referenceDumper);
-        List<ClassData> newData = readData(newArtifact, newDumper);
+        ClassDataLoader referenceDataLoader = classDataLoaderFactory.createClassDataLoader();
+        referenceDataLoader.read(reference.toURI());
+        for (File file : this.referenceClasspath) {
+            referenceDataLoader.read(file.toURI());
+        }
+        List<ClassData> referenceData = referenceDataLoader.getClasses(reference.toURI(), includes, excludes);
+        ClassDataLoader newArtifactDataLoader = classDataLoaderFactory.createClassDataLoader();
+        newArtifactDataLoader.read(newArtifact.toURI());
+        for (File file : this.newArtifactClasspath) {
+            referenceDataLoader.read(file.toURI());
+        }
+        List<ClassData> newData = newArtifactDataLoader.getClasses(newArtifact.toURI(), includes, excludes);
         for (ClassData clazz : referenceData) {
             boolean found = false;
             for (ClassData newClazz : newData) {
@@ -87,72 +104,6 @@ public class BCChecker {
                 reporter.report(new Report(Level.ERROR, "Public class " + clazz.getName() + " has been removed.", clazz, null));
             }
         }
-    }
-    
-    
-    private List<ClassData>readData(File file, ClassDumper dumper) throws IOException {
-        if (file.isDirectory()) {
-            return this.readDataFromDir(file, dumper, null);
-        } else {
-            return this.readDataFromJar(file, dumper);
-        }
-    }
-
-    private List<ClassData> readDataFromDir(File dir, ClassDumper dumper, String path) throws IOException {
-        byte buffer[] = new byte[2048]; 
-        if (path == null) {
-            path = "";
-        }
-        for (File file : dir.listFiles()) {
-            if (file.isDirectory()) {
-                readDataFromDir(file, dumper, path + file.getName() + "/");
-            } else if (file.getName().endsWith(".class") && shouldCheck(path + file.getName())) {
-                ByteArrayOutputStream os =  new ByteArrayOutputStream();
-                InputStream is = new FileInputStream(file);
-                int count = 0;
-                while ((count = is.read(buffer)) != -1) {
-                    os.write(buffer, 0, count);
-                }
-                ClassReader cr = new ClassReader(os.toByteArray());
-                cr.accept(dumper, 0);
-            }
-        }
-        return dumper.getClasses();
-    }
-    
-    private List<ClassData> readDataFromJar(File jar, ClassDumper dumper) throws IOException {
-        FileInputStream fis = new FileInputStream(jar);
-        ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
-        ZipEntry entry = null;
-        byte buffer[] = new byte[2048];
-        int count = 0;
-        while((entry = zis.getNextEntry()) != null) {
-            if (entry.getName().endsWith(".class") && shouldCheck(entry.getName())) {
-                ByteArrayOutputStream os =  new ByteArrayOutputStream();
-                while ((count = zis.read(buffer)) != -1) {
-                    os.write(buffer, 0, count);
-                }
-                ClassReader cr = new ClassReader(os.toByteArray());
-                cr.accept(dumper, 0);
-            }
-        }
-        return dumper.getClasses();
-    }
-    
-    protected boolean shouldCheck(String subpath) {
-        boolean included = includes.size() == 0 ? true : false;
-        for (AntPatternMatcher inc : includes) {
-            if (inc.matches(subpath)) {
-                included = true;
-                break;
-            }
-        }
-        for (AntPatternMatcher exc : excludes) {
-            if (exc.matches(subpath)) {
-                return false;
-            }
-        }
-        return included;
     }
     
     private boolean isArchive(File file) {
@@ -173,4 +124,5 @@ public class BCChecker {
             }
         }
     }
+
 }

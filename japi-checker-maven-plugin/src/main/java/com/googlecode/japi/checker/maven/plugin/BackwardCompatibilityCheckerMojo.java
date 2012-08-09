@@ -18,8 +18,10 @@ package com.googlecode.japi.checker.maven.plugin;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
@@ -28,6 +30,9 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 
 import com.googlecode.japi.checker.BCChecker;
 import com.googlecode.japi.checker.MuxReporter;
@@ -36,8 +41,10 @@ import com.googlecode.japi.checker.Rule;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Goal which check the backward compatibility between generated
@@ -45,7 +52,7 @@ import java.util.List;
  *
  * @goal check
  * @phase verify
- * @requiresDependencyResolution runtime
+ * @requiresDependencyResolution compile
  * @threadSafe
  */
 public class BackwardCompatibilityCheckerMojo
@@ -56,7 +63,7 @@ public class BackwardCompatibilityCheckerMojo
      * @parameter expression="${project.build.directory}"
      * @required
      */
-    private File outputDirectory;
+    protected File outputDirectory;
 
     /**
      * @parameter default-value="${project.artifact}"
@@ -121,6 +128,29 @@ public class BackwardCompatibilityCheckerMojo
      * @required
      */
     protected List<ArtifactRepository> remoteRepos;
+        
+    /**
+     * The artifact collector to use.
+     *
+     * @component role="org.apache.maven.artifact.resolver.ArtifactCollector"
+     * @required
+     * @readonly
+     */
+    protected ArtifactCollector artifactCollector;
+
+    /**
+     * The artifact metadata source to use.
+     *
+     * @component role="org.apache.maven.artifact.metadata.ArtifactMetadataSource" roleHint="maven"
+     * @readonly
+     */
+     protected ArtifactMetadataSource artifactMetadataSource;
+     
+     /**
+      *
+      * @component
+      */
+     private MavenProjectBuilder projectBuilder;    
     
     /**
      * {@inheritDoc}
@@ -139,7 +169,17 @@ public class BackwardCompatibilityCheckerMojo
             try {
                 // Creating a new checker which compare the generated artifact against the provided reference.
                 BCChecker checker = new BCChecker(referenceArtifact.getFile(), artifact.getFile());
-
+                
+                for (Artifact artifact : ((List<Artifact>)project.getCompileArtifacts())) {
+                    this.getLog().debug("Adding new artifact dependency: " + artifact.getFile().toString());
+                    checker.addToNewArtifactClasspath(artifact.getFile());
+                }
+                for (Artifact artifact : this.getDependencyList(reference.getGroupId(), reference.getArtifactId(), reference.getVersion())) {
+                    this.getLog().debug("Adding reference dependency: " + artifact.getFile().toString());
+                    checker.addToReferenceClasspath(artifact.getFile());
+                }
+                
+                
                 // configuring the reporting redirection
                 MuxReporter mux = new MuxReporter();
                 mux.add(new LogReporter(this.getLog()));
@@ -164,6 +204,24 @@ public class BackwardCompatibilityCheckerMojo
             throw new MojoExecutionException("Could not find the artifact: " + artifact.toString());
         }
         
+    }
+    
+    protected List<Artifact> getDependencyList(String groupId, String artifactId, String version) throws MojoExecutionException {
+        try {
+            RuntimeDependencyResolver resolver = new RuntimeDependencyResolver(factory, this.resolver, artifactMetadataSource, localRepository, remoteRepos);
+            Set<Artifact> artifactSet = resolver.transitivelyResolvePomDependencies(projectBuilder, groupId, artifactId, version, true);
+            return new ArrayList<Artifact>(artifactSet);
+        } catch (MalformedURLException e) {
+            throw new MojoExecutionException("Cannot solve reference artifact: ", e);
+        } catch (ArtifactResolutionException e) {
+            throw new MojoExecutionException("Cannot solve reference artifact: ", e);
+        } catch (ArtifactNotFoundException e) {
+            throw new MojoExecutionException("Cannot solve reference artifact: ", e);
+        } catch (ProjectBuildingException e) {
+            throw new MojoExecutionException("Cannot solve reference artifact: ", e);
+        } catch (InvalidDependencyVersionException e) {
+            throw new MojoExecutionException("Cannot solve reference artifact: ", e);
+        }        
     }
 
     private List<Rule> getRuleInstances() throws MojoExecutionException {
@@ -229,7 +287,7 @@ public class BackwardCompatibilityCheckerMojo
      * @return Artifact object representing the specified file.
      * @throws MojoExecutionException with a message if the version can't be found in DependencyManagement.
      */
-    protected void updateArtifact( ArtifactItem artifactItem )
+    protected void updateArtifact(ArtifactItem artifactItem)
         throws MojoExecutionException {
         
         if (artifactItem.getArtifact() != null) {
@@ -266,7 +324,7 @@ public class BackwardCompatibilityCheckerMojo
         return this.project;
     }
     
-    class ErrorCountReporter implements Reporter {
+    static class ErrorCountReporter implements Reporter {
         private int count;
 
         public void report(Report report) {

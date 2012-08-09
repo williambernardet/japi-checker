@@ -15,6 +15,7 @@
  */
 package com.googlecode.japi.checker;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import java.io.File;
@@ -38,8 +39,9 @@ import com.googlecode.japi.checker.rules.CheckFieldChangeToTransient;
 import com.googlecode.japi.checker.rules.CheckInheritanceChanges;
 import com.googlecode.japi.checker.rules.CheckMethodChangedToFinal;
 import com.googlecode.japi.checker.rules.CheckMethodChangedToStatic;
-import com.googlecode.japi.checker.rules.CheckMethodException;
+import com.googlecode.japi.checker.rules.CheckMethodExceptions;
 import com.googlecode.japi.checker.rules.CheckRemovedMethod;
+import com.googlecode.japi.checker.rules.CheckSuperClass;
 import com.googlecode.japi.checker.rules.ClassChangedToAbstract;
 import com.googlecode.japi.checker.rules.ClassChangedToFinal;
 import com.googlecode.japi.checker.rules.ClassChangedToInterface;
@@ -80,6 +82,8 @@ public class TestBCChecker {
                 System.out.println(newVersion);
             }
         }
+        assertNotNull("The reference library is not found.", reference);
+        assertNotNull("The newVersion library is not found.", newVersion);
     }
     
     @After
@@ -211,7 +215,7 @@ public class TestBCChecker {
     
     @Test
     public void testCheckMethodException() throws InstantiationException, IllegalAccessException, IOException {
-        BasicReporter reporter = check(CheckMethodException.class, "**/CheckMethodException.class");
+        BasicReporter reporter = check(CheckMethodExceptions.class, "**/CheckMethodException.class");
         reporter.assertContains(Level.ERROR, "publicAddedException is now throwing java/lang/Exception.");
         reporter.assertContains(Level.ERROR, "protectedAddedException is now throwing java/lang/Exception.");
         reporter.assertContains(Level.ERROR, "publicRemovedException is not throwing java/lang/Exception anymore.");
@@ -251,6 +255,27 @@ public class TestBCChecker {
         reporter.assertContains(Level.ERROR, "The class com/googlecode/japi/checker/tests/InterfaceToClass has been change into an interface.");
     }
 
+    @Test
+    public void testCheckClassBaseClassChangedBaseClassRemoved() throws InstantiationException, IllegalAccessException, IOException {
+        BasicReporter reporter = check(CheckSuperClass.class, "**/inheritance/removebaseclass/A.class");
+        assertEquals(1, reporter.count(Level.ERROR));
+        reporter.assertContains(Level.ERROR, "The class com/googlecode/japi/checker/tests/inheritance/removebaseclass/A does not inherit from com/googlecode/japi/checker/tests/inheritance/removebaseclass/B anymore.");
+    }
+
+    @Test
+    public void testCheckClassBaseClassChangedBaseClassChangedWithoutBreakingTheInheritance() throws InstantiationException, IllegalAccessException, IOException {
+        BasicReporter reporter = check(CheckSuperClass.class, "**/inheritance/changetree/A.class");
+        assertEquals(0, reporter.count(Level.ERROR));
+        //reporter.assertContains(Level.ERROR, "The class com/googlecode/japi/checker/tests/inheritance/removebaseclass/A does not inherit from com/googlecode/japi/checker/tests/inheritance/removebaseclass/B anymore.");
+    }
+
+    @Test
+    public void testCheckClassBaseClassChangedBaseClassWithSameClass() throws InstantiationException, IllegalAccessException, IOException {
+        BasicReporter reporter = check(CheckSuperClass.class, "**/inheritance/changetree/B.class");
+        assertEquals(0, reporter.count(Level.ERROR));
+        //reporter.assertContains(Level.ERROR, "The class com/googlecode/japi/checker/tests/inheritance/removebaseclass/A does not inherit from com/googlecode/japi/checker/tests/inheritance/removebaseclass/B anymore.");
+    }
+    
     public BasicReporter check(Class<? extends Rule> clazz, String ... includes) throws InstantiationException, IllegalAccessException, IOException {
         BCChecker checker = new BCChecker(reference, newVersion);
         BasicReporter reporter = new BasicReporter();

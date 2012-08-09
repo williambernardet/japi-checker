@@ -17,6 +17,7 @@ package com.googlecode.japi.checker.model;
 
 import org.objectweb.asm.Opcodes;
 
+import com.googlecode.japi.checker.ClassDataLoader;
 import com.googlecode.japi.checker.Scope;
 
 public abstract class JavaItem {
@@ -28,8 +29,9 @@ public abstract class JavaItem {
     private boolean isFinal;
     private boolean isStatic;
     private boolean isTransient;
+    private ClassDataLoader classDataLoader;
 
-    protected JavaItem(ClassData owner, int access, String name) {
+    protected JavaItem(ClassDataLoader loader, ClassData owner, int access, String name) {
         this.setOwner(owner);
         this.setName(name);
         this.setVisibility(toScope(access));
@@ -38,6 +40,7 @@ public abstract class JavaItem {
         this.setFinal((access & Opcodes.ACC_FINAL) == Opcodes.ACC_FINAL);
         this.setStatic((access & Opcodes.ACC_STATIC) == Opcodes.ACC_STATIC);
         this.setTransient((access & Opcodes.ACC_TRANSIENT) == Opcodes.ACC_TRANSIENT);
+        this.setClassDataLoader(loader);
     }
 
     protected void setVisibility(Scope visibility) {
@@ -168,5 +171,21 @@ public abstract class JavaItem {
      */
     public String toString() {
         return name;
+    }
+
+    /**
+     * Get the ClassDataLoader associated with this instance.
+     * {@inheritDoc}
+     */
+    public ClassDataLoader getClassDataLoader() {
+        return classDataLoader;
+    }
+
+    /**
+     * Get the ClassDataLoader associated with this instance.
+     * {@inheritDoc}
+     */
+    protected void setClassDataLoader(ClassDataLoader loader) {
+        classDataLoader = loader;
     }
 }

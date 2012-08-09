@@ -18,7 +18,6 @@ package com.googlecode.japi.checker.maven.plugin;
 import org.apache.maven.plugin.logging.Log;
 
 import com.googlecode.japi.checker.Reporter;
-import com.googlecode.japi.checker.Reporter.Report;
 import com.googlecode.japi.checker.model.MethodData;
 
 public class LogReporter implements Reporter {

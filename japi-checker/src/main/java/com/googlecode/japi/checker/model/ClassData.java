@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.googlecode.japi.checker.ClassDataLoader;
 import com.googlecode.japi.checker.Reporter;
 import com.googlecode.japi.checker.Rule;
 
@@ -33,8 +34,8 @@ public class ClassData extends JavaItem {
     private int version;
     private String source;
 
-    public ClassData(ClassData owner, int access, String name, String signature, String superName, String[] interfaces, int version) {
-        super(owner, access, name);
+    public ClassData(ClassDataLoader loader, ClassData owner, int access, String name, String signature, String superName, String[] interfaces, int version) {
+        super(loader, owner, access, name);
         this.setSignature(signature);
         this.superName = superName;
         Collections.addAll(this.interfaces, interfaces);
@@ -66,14 +67,12 @@ public class ClassData extends JavaItem {
             }
         }
         for (MethodData oldMethod : clazz.methods) {
-            boolean found = false;
             for (MethodData newMethod: this.methods) {
                 if (oldMethod.isSame(newMethod)) {
                     newMethod.checkBackwardCompatibility(reporter, oldMethod, rules);
                     for (Rule rule : rules) {
                         rule.checkBackwardCompatibility(reporter, oldMethod, newMethod);
                     }
-                    found = true;
                     break;
                 }
             }

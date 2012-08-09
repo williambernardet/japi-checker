@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 William Bernardet
+ * Copyright 2012 William Bernardet
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.googlecode.japi.checker.model;
+package com.googlecode.japi.checker;
 
-import com.googlecode.japi.checker.ClassDataLoader;
+/**
+ * Factory which allow the BCChecker to create ClassDataLoader on demand.
+ * This provides a simple mechanism to provide custom extended version of
+ * ClassDataLoader. 
+ */
+public interface ClassDataLoaderFactory {
 
-
-public class AttributeData extends JavaItem {
-
-    public AttributeData(ClassDataLoader loader, ClassData owner, int access, String name) {
-        super(loader, owner, access, name);
-    }
-
-    @Override
-    public String getType() {
-        return "attribute";
-    }
+    /**
+     * Provides a new ClassDataLoader implementation instance.
+     * @return A new instance.
+     */
+    ClassDataLoader createClassDataLoader();
 }

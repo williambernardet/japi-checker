@@ -32,7 +32,7 @@ public class AllRules implements Rule {
         rules.add(new CheckFieldChangeOfType());
         rules.add(new CheckFieldChangeToStatic());
         rules.add(new CheckInheritanceChanges());
-        rules.add(new CheckMethodException());
+        rules.add(new CheckMethodExceptions());
         rules.add(new CheckRemovedField());
         rules.add(new CheckRemovedMethod());
         rules.add(new ClassChangedToAbstract());
@@ -41,6 +41,7 @@ public class AllRules implements Rule {
         rules.add(new CheckMethodChangedToFinal());
         rules.add(new ClassChangedToInterface());
         rules.add(new InterfaceChangedToClass());
+        rules.add(new CheckSuperClass());
     }
     
     @Override

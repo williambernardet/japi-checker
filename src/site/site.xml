@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="JAPI-Checker">
+  <bannerLeft>
+    <name>JAPI-Checker POM</name>
+    <src>http://maven.apache.org/images/apache-maven-project.png</src>
+    <href>http://maven.apache.org/</href>
+  </bannerLeft>
+  <body>
+    <links>
+        <item name="${project.name}" href="${project.url}"/>
+    </links>
+    <menu ref="parent"/> 
+    <menu ref="modules"/>
+    <menu ref="reports"/>
+  </body>
+</project>
