@@ -222,6 +222,13 @@ public class TestBCChecker {
         reporter.assertContains(Level.ERROR, "protectedRemovedException is not throwing java/lang/Exception anymore.");
         assertEquals(4, reporter.count(Level.ERROR));
     }
+
+    @Test
+    public void testCheckMethodExceptionInheritance() throws InstantiationException, IllegalAccessException, IOException {
+        BasicReporter reporter = check(CheckMethodExceptions.class, "**/CheckMethodExceptionInheritance.class");
+        assertEquals(0, reporter.count(Level.ERROR));
+    }
+
     
     @Test
     public void testCheckerInnerClassRemoved() throws InstantiationException, IllegalAccessException, IOException {

@@ -13,31 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.googlecode.japi.checker.tests;
+package com.googlecode.japi.checker.tests.exceptions;
 
-public class CheckMethodException {
+public class CheckMethodExceptionInheritance {
 
-    public void publicAddedException() {
+    
+    public void publicInheritedException() throws MyNewException {
         
     }
 
-    protected void protectedAddedException() {
+    protected void protectedInheritedException() throws MyNewException {
         
     }
 
-    private void privatedAddedException() {
+    private void privatedInheritedException() throws MyNewException {
         
     }
     
-    public void publicRemovedException() throws Exception {
+    public void publicInheritedExceptionAndAdditional() throws MyNewException, MyAdditionalException {
         
     }
 
-    protected void protectedRemovedException() throws Exception {
+    protected void protectedInheritedExceptionAndAdditional() throws MyNewException, MyAdditionalException {
         
     }
 
-    private void privatedRemovedException() throws Exception {
+    private void privatedInheritedExceptionAndAdditional() throws MyNewException, MyAdditionalException {
         
     }
+    
 }
