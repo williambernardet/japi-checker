@@ -100,7 +100,7 @@ public class AntPatternMatcher {
      * @return true if the path matches the expression.
      */
     public boolean matches(File path) {
-        return pattern.matcher(path.getPath().replace('/', File.separatorChar).replace('\\', File.separatorChar)).matches();
+        return pattern.matcher(normalizePath(path.getPath())).matches();
     }
     
     /**
@@ -116,7 +116,7 @@ public class AntPatternMatcher {
         int i = 0;
         int n = expression.length();
         String result = "";
-        expression = expression.replaceAll("[/\\\\]", File.separator);
+        expression = normalizePath(expression);
         while (i < n) {
             char c = expression.charAt(i++);
             if (c == '*') {
@@ -191,4 +191,11 @@ public class AntPatternMatcher {
         return getKey(casesensitive, expression);
     }
 
+    private static String normalizePath(String path) {
+        if ('/' == File.separatorChar) {
+            return path.replace('\\', File.separatorChar);
+        } else {
+            return path.replace('/', File.separatorChar);
+        }
+    }
 }
