@@ -41,6 +41,7 @@ import com.googlecode.japi.checker.rules.CheckMethodChangedToFinal;
 import com.googlecode.japi.checker.rules.CheckMethodChangedToStatic;
 import com.googlecode.japi.checker.rules.CheckMethodExceptions;
 import com.googlecode.japi.checker.rules.CheckRemovedMethod;
+import com.googlecode.japi.checker.rules.CheckSerialVersionUIDField;
 import com.googlecode.japi.checker.rules.CheckSuperClass;
 import com.googlecode.japi.checker.rules.ClassChangedToAbstract;
 import com.googlecode.japi.checker.rules.ClassChangedToFinal;
@@ -282,7 +283,35 @@ public class TestBCChecker {
         assertEquals(0, reporter.count(Level.ERROR));
         //reporter.assertContains(Level.ERROR, "The class com/googlecode/japi/checker/tests/inheritance/removebaseclass/A does not inherit from com/googlecode/japi/checker/tests/inheritance/removebaseclass/B anymore.");
     }
+
     
+    @Test
+    public void testCheckSerialVersionUIDFieldSameUID() throws InstantiationException, IllegalAccessException, IOException {
+        BasicReporter reporter = check(CheckSerialVersionUIDField.class, "**/SameUID.class");
+        assertEquals(0, reporter.count(Level.ERROR));
+    }
+
+    @Test
+    public void testCheckSerialVersionUIDFieldDifferentUID() throws InstantiationException, IllegalAccessException, IOException {
+        BasicReporter reporter = check(CheckSerialVersionUIDField.class, "**/DifferentUID.class");
+        assertEquals(1, reporter.count(Level.ERROR));
+        reporter.assertContains(Level.ERROR, "The value of the serialVersionUID field has changed from 0xa64662a9226655f7 to 0xa64662a9226655ad.");
+    }
+
+    @Test
+    public void testCheckSerialVersionUIDFieldInvalidTypeUID() throws InstantiationException, IllegalAccessException, IOException {
+        BasicReporter reporter = check(CheckSerialVersionUIDField.class, "**/InvalidTypeUID.class");
+        assertEquals(1, reporter.count(Level.ERROR));
+        reporter.assertContains(Level.ERROR, "The type for field serialVersionUID is invalid, it must be a long.");
+    }
+    
+    @Test
+    public void testCheckSerialVersionUIDFieldInvalidTypeInNewUID() throws InstantiationException, IllegalAccessException, IOException {
+        BasicReporter reporter = check(CheckSerialVersionUIDField.class, "**/InvalidTypeInNewUID.class");
+        assertEquals(1, reporter.count(Level.ERROR));
+        reporter.assertContains(Level.ERROR, "The type for field serialVersionUID is invalid, it must be a long.");
+    }
+
     public BasicReporter check(Class<? extends Rule> clazz, String ... includes) throws InstantiationException, IllegalAccessException, IOException {
         BCChecker checker = new BCChecker(reference, newVersion);
         BasicReporter reporter = new BasicReporter();
