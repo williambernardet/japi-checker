@@ -27,13 +27,14 @@ import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
 import com.googlecode.japi.checker.model.ClassData;
 import com.googlecode.japi.checker.model.FieldData;
 import com.googlecode.japi.checker.model.InnerClassData;
 import com.googlecode.japi.checker.model.MethodData;
 
-class ClassDumper implements ClassVisitor {
+class ClassDumper extends ClassVisitor {
     private ClassDataLoader loader;
     private Logger logger = Logger.getLogger(ClassDumper.class.getName());
     private ClassData clazz; // current main class being parsed.
@@ -44,6 +45,7 @@ class ClassDumper implements ClassVisitor {
      * @param loader the ClassDataLoader to which the model are associated.
      */
     public ClassDumper(ClassDataLoader loader) {
+        super(Opcodes.ASM4);
         this.loader = loader;
     }
     
