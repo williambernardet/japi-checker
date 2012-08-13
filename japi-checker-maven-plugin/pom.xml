@@ -19,11 +19,10 @@
     <parent>
         <artifactId>japi-checker-pom</artifactId>
         <groupId>com.googlecode.japi-checker</groupId>
-        <version>0.1.5-SNAPSHOT</version>
+        <version>0.2.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>japi-checker-maven-plugin</artifactId>
-    <version>0.1.5-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
     <name>JAPI-Checker Maven Plugin</name>
     <url>http://japi-checker.googlecode.com</url>
@@ -99,8 +98,7 @@
         <dependency>
             <groupId>com.googlecode.japi-checker</groupId>
             <artifactId>japi-checker</artifactId>
-            <version>0.1.5-SNAPSHOT</version>
-            <type>jar</type>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
         	<groupId>org.apache.maven.plugin-testing</groupId>
@@ -117,14 +115,14 @@
             <dependency>
             <groupId>com.googlecode.japi-checker</groupId>
             <artifactId>reference-test-jar</artifactId>
-            <version>0.1.5-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>test</scope>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.googlecode.japi-checker</groupId>
             <artifactId>new-test-jar</artifactId>
-            <version>0.1.5-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>test</scope>
             <type>jar</type>
         </dependency>
