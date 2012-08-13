@@ -85,7 +85,7 @@ public class BCChecker {
         ClassDataLoader newArtifactDataLoader = classDataLoaderFactory.createClassDataLoader();
         newArtifactDataLoader.read(newArtifact.toURI());
         for (File file : this.newArtifactClasspath) {
-            referenceDataLoader.read(file.toURI());
+            newArtifactDataLoader.read(file.toURI());
         }
         List<ClassData> newData = newArtifactDataLoader.getClasses(newArtifact.toURI(), includes, excludes);
         for (ClassData clazz : referenceData) {
