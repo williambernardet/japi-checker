@@ -25,10 +25,10 @@ public interface Reporter {
     
     public static class Report {
         public final Level level;
-        public final  JavaItem referenceItem;
-        public final  JavaItem newItem;
-        public final  String source;
-        public final  String message;
+        public final String message;
+        public final JavaItem referenceItem; // can be null
+        public final JavaItem newItem; // can be null
+        public final String source; // can be null
         
         public Report(Level level, String message, JavaItem referenceItem, JavaItem newItem) {
             this.level = level;
@@ -38,6 +38,13 @@ public interface Reporter {
             this.source = (referenceItem.getOwner() == null ? ((ClassData)referenceItem).getFilename() : referenceItem.getOwner().getFilename());
         }
         
+        public Report(Level level, String message) {
+            this.level = level;
+            this.message = message;
+            this.referenceItem = null;
+            this.newItem = null;
+            this.source = null; 
+        }
     }
     
 }

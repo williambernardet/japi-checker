@@ -21,8 +21,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.objectweb.asm.ClassReader;
-
 
 public class DirectoryReader extends AbstractClassReader {
 
@@ -37,17 +35,19 @@ public class DirectoryReader extends AbstractClassReader {
     @Override
     public void read() throws IOException {
         clear();
-        scanDir(this.path, null);
+        ReadClassesException errors = new ReadClassesException(); 
+        scanDir(this.path, null, errors);
+        errors.throwIfNeeded();
     }
 
-    private void scanDir(File dir, String path) throws IOException {
+    private void scanDir(File dir, String path, ReadClassesException errors) throws IOException {
         byte buffer[] = new byte[2048]; 
         if (path == null) {
             path = "";
         }
         for (File file : dir.listFiles()) {
             if (file.isDirectory()) {
-                scanDir(file, path + file.getName() + "/");
+                scanDir(file, path + file.getName() + "/", errors);
             } else if (file.getName().endsWith(".class")) {
                 ClassDumper dumper = new ClassDumper(loader); 
                 ByteArrayOutputStream os =  new ByteArrayOutputStream();
@@ -58,9 +58,13 @@ public class DirectoryReader extends AbstractClassReader {
                     while ((count = is.read(buffer)) != -1) {
                         os.write(buffer, 0, count);
                     }
-                    ClassReader cr = new ClassReader(os.toByteArray());
-                    cr.accept(dumper, 0);
-                    this.put(path + file.getName(), dumper.getClasses());
+                    try {
+                        this.readClass(dumper, path + file.getName(), os.toByteArray());
+                    } catch (ReadClassException exc) {
+                        errors.add(exc);
+                    } finally {
+                        os.close();
+                    }
                 } finally {
                     if (is != null) {
                         is.close();

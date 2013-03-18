@@ -35,6 +35,7 @@ public class BCChecker {
     private List<AntPatternMatcher> includes = new ArrayList<AntPatternMatcher>();
     private List<AntPatternMatcher> excludes = new ArrayList<AntPatternMatcher>();
     private ClassDataLoaderFactory classDataLoaderFactory = new DefaultClassDataLoaderFactory();
+    private boolean warnOnDependencyLoadingError;
     
     public BCChecker(File reference, File newArtifact) {
         if (reference == null) {
@@ -77,15 +78,35 @@ public class BCChecker {
         }
 
         ClassDataLoader referenceDataLoader = classDataLoaderFactory.createClassDataLoader();
+        reporter.report(new Report(Level.INFO, "Reading reference artifact: " + reference));
         referenceDataLoader.read(reference.toURI());
         for (File file : this.referenceClasspath) {
-            referenceDataLoader.read(file.toURI());
+            try {
+                reporter.report(new Report(Level.INFO, "Reading reference dependency: " + file));
+                referenceDataLoader.read(file.toURI());
+            } catch (ReadClassException e){
+                if (this.shouldWarnOnDependencyLoadingError()) {
+                    reporter.report(new Report(Level.WARNING, e.getMessage()));
+                } else {
+                    throw e;
+                }
+            }
         }
         List<ClassData> referenceData = referenceDataLoader.getClasses(reference.toURI(), includes, excludes);
         ClassDataLoader newArtifactDataLoader = classDataLoaderFactory.createClassDataLoader();
+        reporter.report(new Report(Level.INFO, "Reading artifact: " + newArtifact));
         newArtifactDataLoader.read(newArtifact.toURI());
         for (File file : this.newArtifactClasspath) {
-            newArtifactDataLoader.read(file.toURI());
+            try {
+                reporter.report(new Report(Level.INFO, "Reading dependency: " + file));
+                newArtifactDataLoader.read(file.toURI());
+            } catch (ReadClassException e){
+                if (this.shouldWarnOnDependencyLoadingError()) {
+                    reporter.report(new Report(Level.WARNING, e.getMessage()));
+                } else {
+                    throw e;
+                }
+            }
         }
         List<ClassData> newData = newArtifactDataLoader.getClasses(newArtifact.toURI(), includes, excludes);
         for (ClassData clazz : referenceData) {
@@ -123,6 +144,22 @@ public class BCChecker {
                 }
             }
         }
+    }
+    
+    /**
+     * 
+     * @param warnOnDependencyLoadingError
+     */
+    public void setWarnOnDependencyLoadingError(boolean warnOnDependencyLoadingError) {
+        this.warnOnDependencyLoadingError = warnOnDependencyLoadingError;
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public boolean shouldWarnOnDependencyLoadingError() {
+        return this.warnOnDependencyLoadingError;
     }
 
 }

@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.objectweb.asm.ClassReader;
+
 import com.googlecode.japi.checker.model.ClassData;
 import com.googlecode.japi.checker.utils.AntPatternMatcher;
 
@@ -42,6 +44,23 @@ public abstract class AbstractClassReader {
      */
     abstract void read() throws IOException;
 
+    /**
+     * 
+     * @param visitor
+     * @param name
+     * @param data
+     * @throws ReadClassException
+     */
+    protected void readClass(ClassDumper visitor, String name, byte[] data) throws ReadClassException {
+        try {
+            ClassReader cr = new ClassReader(data);
+            cr.accept(visitor, 0);
+            this.put(name, visitor.getClasses());
+        } catch (RuntimeException exc) {
+            throw new ReadClassException("Error occurred while loading class " + name + ": " + exc.toString(), exc);
+        }
+    }
+    
     /**
      * Get all the discovered classes.
      * @return a list of all the discovered classes.

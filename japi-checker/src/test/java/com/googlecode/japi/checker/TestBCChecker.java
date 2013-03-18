@@ -95,7 +95,9 @@ public class TestBCChecker {
     @Test
     public void testBCCheckerInclude() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(null, "**/Nothing*.class");
-        assertEquals(0, reporter.getMessages().size());
+        assertEquals(2, reporter.getMessages().size()); // 2 info message about reading jar files.
+        assertEquals(0, reporter.count(Level.ERROR));
+        assertEquals(0, reporter.count(Level.WARNING));
     }
 
     
