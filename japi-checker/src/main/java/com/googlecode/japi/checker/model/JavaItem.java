@@ -15,6 +15,10 @@
  */
 package com.googlecode.japi.checker.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.objectweb.asm.Opcodes;
 
 import com.googlecode.japi.checker.ClassDataLoader;
@@ -30,6 +34,7 @@ public abstract class JavaItem {
     private boolean isStatic;
     private boolean isTransient;
     private ClassDataLoader classDataLoader;
+    private List<AnnotationData> annotations = new ArrayList<AnnotationData>();
 
     protected JavaItem(ClassDataLoader loader, ClassData owner, int access, String name) {
         this.setOwner(owner);
@@ -187,5 +192,31 @@ public abstract class JavaItem {
      */
     protected void setClassDataLoader(ClassDataLoader loader) {
         classDataLoader = loader;
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public List<AnnotationData> getAnnotations() {
+        return Collections.<AnnotationData>unmodifiableList(annotations);
+    }
+    
+    /**
+     * 
+     * @param annotations
+     */
+    public void add(AnnotationData annotation) {
+        this.annotations.add(annotation);
+    }
+    
+    
+    public AnnotationData getAnnotation(String desc) {
+        for (AnnotationData annotation : this.annotations) {
+            if (desc != null && desc.equals(annotation.getDesc())) {
+                return annotation;
+            }
+        }
+        return null;
     }
 }

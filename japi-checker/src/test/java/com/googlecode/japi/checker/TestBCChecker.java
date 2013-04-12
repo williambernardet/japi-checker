@@ -15,23 +15,12 @@
  */
 package com.googlecode.japi.checker;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.googlecode.japi.checker.Reporter.Level;
-import com.googlecode.japi.checker.model.MethodData;
 import com.googlecode.japi.checker.rules.CheckChangeOfScope;
 import com.googlecode.japi.checker.rules.CheckFieldChangeOfType;
 import com.googlecode.japi.checker.rules.CheckFieldChangeToStatic;
@@ -48,50 +37,8 @@ import com.googlecode.japi.checker.rules.ClassChangedToFinal;
 import com.googlecode.japi.checker.rules.ClassChangedToInterface;
 import com.googlecode.japi.checker.rules.InterfaceChangedToClass;
 
-public class TestBCChecker {
+public class TestBCChecker extends AbstractBCCheckerUnitTest {
     
-    private File reference;
-    private File newVersion;
-    private Handler handler = new Handler() {
-
-        @Override
-        public void close() throws SecurityException {
-        }
-
-        @Override
-        public void flush() {
-        }
-
-        @Override
-        public void publish(LogRecord record) {
-            System.out.println(record.getMessage());
-        }
-        
-    };
-    
-    @Before
-    public void setUp() {
-        Logger.getLogger(ClassDumper.class.getName()).setLevel(java.util.logging.Level.ALL);
-        Logger.getLogger(ClassDumper.class.getName()).addHandler(handler);
-        System.out.println("==================================");
-        for (String file : System.getProperty("java.class.path").split(File.pathSeparator)) {
-            if (file.contains("reference-test-jar")) {
-                reference = new File(file);
-                System.out.println(reference);
-            } else if (file.contains("new-test-jar")) {
-                newVersion = new File(file);
-                System.out.println(newVersion);
-            }
-        }
-        assertNotNull("The reference library is not found.", reference);
-        assertNotNull("The newVersion library is not found.", newVersion);
-    }
-    
-    @After
-    public void tearDown() {
-        Logger.getLogger(ClassDumper.class.getName()).removeHandler(handler);
-    }
-
     @Test
     public void testBCCheckerInclude() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(null, "**/Nothing*.class");
@@ -313,62 +260,6 @@ public class TestBCChecker {
         assertEquals(1, reporter.count(Level.ERROR));
         reporter.assertContains(Level.ERROR, "The type for field serialVersionUID is invalid, it must be a long.");
     }
-
-    public BasicReporter check(Class<? extends Rule> clazz, String ... includes) throws InstantiationException, IllegalAccessException, IOException {
-        BCChecker checker = new BCChecker(reference, newVersion);
-        BasicReporter reporter = new BasicReporter();
-        List<Rule> rules = new ArrayList<Rule>();
-        if (clazz != null) {
-            rules.add(clazz.newInstance());
-        }
-        if (includes != null) {
-            for (String include : includes) {
-                checker.addInclude(include);
-            }
-        }
-        checker.checkBacwardCompatibility(reporter, rules);
-        return reporter;
-    }
     
-    public static class BasicReporter implements Reporter {
-        List<Report> messages = new ArrayList<Report>();
-        
-        @Override
-        public void report(Report report) {
-            System.out.println(report.level.toString() + ": " + report.source + getLine(report) + ": " + report.message);
-            messages.add(report);
-        }
-        
-        private static String getLine(Report report) {
-            if (report.newItem instanceof MethodData) {
-                return "(" + ((MethodData)report.newItem).getLineNumber() + ")";
-            }
-            return "";
-        }
-        
-        public List<Report> getMessages() {
-            return messages;
-        }
-
-        public int count(Level level) {
-            int count = 0;
-            for (Report message : messages) {
-                if (message.level == level) {
-                    count++;
-                }
-            }
-            return count;
-        }
-        
-        public void assertContains(Level level, String str) {
-            for (Report message : messages) {
-                if (message.level == level && message.message.contains(str)) {
-                    return;
-                }
-            }
-            fail("Could not find message containing: " + str);
-        }
-
-    }
 
 }

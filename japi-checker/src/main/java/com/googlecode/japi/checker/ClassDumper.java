@@ -63,7 +63,7 @@ class ClassDumper extends ClassVisitor {
      * {@inheritDoc}
      */
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-        return null;
+        return new AnnotationDumper(clazz, desc, visible);
     }
 
     public void visitAttribute(Attribute attribute) {

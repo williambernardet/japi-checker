@@ -35,8 +35,8 @@ public class MethodDumper extends MethodVisitor {
     }
     
     @Override
-    public AnnotationVisitor visitAnnotation(String arg0, boolean arg1) {
-        return null;
+    public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+        return new AnnotationDumper(method, desc, visible);
     }
 
     @Override
