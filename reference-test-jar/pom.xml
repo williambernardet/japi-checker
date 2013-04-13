@@ -38,6 +38,14 @@
             <name>William Bernardet</name>
         </developer>
     </developers>
+    
+    <dependencies>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>annotations</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>

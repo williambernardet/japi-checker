@@ -43,4 +43,13 @@
         <findbugs.skip>true</findbugs.skip>
     </properties>
     <name>JAPI-Checker test artifact</name>
+    
+    <dependencies>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>annotations</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+    </dependencies>
+    
 </project>
