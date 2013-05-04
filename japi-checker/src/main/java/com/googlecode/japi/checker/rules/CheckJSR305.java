@@ -35,10 +35,10 @@ public class CheckJSR305 implements Rule {
             MethodData newMethod = (MethodData)newItem;
             if (referenceMethod.getAnnotation(JSR305_NONNULL_DESC) != null &&
                     newMethod.getAnnotation(JSR305_NULLABLE_DESC) != null) {
-                reporter.report(new Report(Level.ERROR, "The reference method declare the JSR305 Nonnull annotation, but the new method declares to be Nullable.", reference, newItem));
+                reporter.report(new Report(Level.ERROR, "The reference method declares the JSR305 Nonnull annotation, but the new method declares to be Nullable.", reference, newItem));
             } else if (referenceMethod.getAnnotation(JSR305_NONNULL_DESC) != null &&
                     newMethod.getAnnotation(JSR305_NONNULL_DESC) == null) {
-                reporter.report(new Report(Level.ERROR, "The reference method declare the JSR305 Nonnull annotation, but not the new method.", reference, newItem));
+                reporter.report(new Report(Level.ERROR, "The reference method declares the JSR305 Nonnull annotation, but not the new method.", reference, newItem));
             } 
         }
     }
