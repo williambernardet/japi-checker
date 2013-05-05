@@ -15,10 +15,22 @@
  */
 package com.googlecode.japi.checker;
 
+import javax.annotation.Nonnull;
+
 import com.googlecode.japi.checker.model.JavaItem;
 
+/**
+ * Interface defining a validation rule. 
+ *
+ */
 public interface Rule {
-
-    void checkBackwardCompatibility(Reporter reporter, JavaItem reference, JavaItem newItem);
+	
+	/**
+	 * 
+	 * @param reporter the reporter where to report issues to, never null.
+	 * @param reference the reference item, never null.
+	 * @param newItem the new item, never null.
+	 */
+    void checkBackwardCompatibility(@Nonnull Reporter reporter, JavaItem reference, JavaItem newItem);
     
 }
