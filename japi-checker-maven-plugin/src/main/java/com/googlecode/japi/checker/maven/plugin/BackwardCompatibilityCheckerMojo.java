@@ -36,8 +36,8 @@ import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 
 import com.googlecode.japi.checker.BCChecker;
 import com.googlecode.japi.checker.MuxReporter;
-import com.googlecode.japi.checker.Reporter;
 import com.googlecode.japi.checker.Rule;
+import com.googlecode.japi.checker.SeverityCountReporter;
 
 import java.io.File;
 import java.io.IOException;
@@ -183,13 +183,13 @@ public class BackwardCompatibilityCheckerMojo
                 // configuring the reporting redirection
                 MuxReporter mux = new MuxReporter();
                 mux.add(new LogReporter(this.getLog()));
-                ErrorCountReporter ec = new ErrorCountReporter();
+                SeverityCountReporter ec = new SeverityCountReporter();
                 mux.add(ec);
             
                 // Running the check...
                 this.getLog().info("Checking backward compatibility of " + artifact.toString() + " against " + referenceArtifact.toString());
                 checker.checkBacwardCompatibility(mux, getRuleInstances());
-                if (ec.hasError()) {
+                if (ec.hasSeverity()) {
                     getLog().error("You have " + ec.getCount() + " backward compatibility issues.");
                     throw new MojoFailureException("You have " + ec.getCount() + " backward compatibility issues.");
                 } else {
@@ -323,23 +323,5 @@ public class BackwardCompatibilityCheckerMojo
     public MavenProject getProject() {
         return this.project;
     }
-    
-    static class ErrorCountReporter implements Reporter {
-        private int count;
 
-        public void report(Report report) {
-            if (Level.ERROR == report.level) {
-                count++;
-            }
-        }
-        
-        public int getCount() {
-            return count;
-        }
-
-        public boolean hasError() {
-            return count > 0;
-        }
-        
-    }
 }
