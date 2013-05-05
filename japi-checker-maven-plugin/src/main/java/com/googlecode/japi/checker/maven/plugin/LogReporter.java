@@ -49,6 +49,9 @@ public class LogReporter implements Reporter {
     }
 
     private String format(Report report) {
+    	if (report.source == null) {
+    		return report.message;
+    	}
         return report.source + getLine(report) + ": " + report.message;
     }
     
