@@ -44,6 +44,7 @@
         <module>reference-test-jar</module>
         <module>new-test-jar</module>
         <module>japi-checker-maven-plugin</module>
+        <module>japi-checker-ant</module>
     </modules>
     
     <distributionManagement>

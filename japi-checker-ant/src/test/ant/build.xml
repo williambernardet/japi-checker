@@ -1,0 +1,20 @@
+<project name="japi-checker-ant-task-test" xmlns:au="antlib:org.apache.ant.antunit">
+	
+	<target name="test">
+		<dirname file="${ant.file.japi-checker-ant-task-test}" property="test.dir"/>
+		<property name="reference.jar.file" value="${com.googlecode.japi-checker:reference-test-jar:jar}" />
+		<property name="new.jar.file" value="${com.googlecode.japi-checker:new-test-jar:jar}" />
+		<property name="findbugs.jar.file" value="${com.google.code.findbugs:annotations:jar}" />
+		
+		<au:antunit>
+			<fileset dir="${test.dir}" includes="test_*.ant.xml" />
+		    <au:plainlistener logLevel="info" />
+			<reference refid="maven.runtime.classpath" torefid="maven.runtime.classpath" />
+			<propertyset>
+				<propertyref name="reference.jar.file"/>
+				<propertyref name="new.jar.file" />
+				<propertyref name="findbugs.jar.file" />
+			</propertyset>
+		</au:antunit>
+	</target>
+</project>

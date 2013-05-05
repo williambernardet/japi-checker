@@ -1,0 +1,63 @@
+<project name="test_checkanttask.ant.xml" xmlns:au="antlib:org.apache.ant.antunit"
+	xmlns:japi="antlib:com.googlecode.japi.checker.ant">
+
+	<taskdef uri="antlib:com.googlecode.japi.checker.ant"
+             resource="com/googlecode/japi/checker/ant/antlib.xml"
+             classpathref="maven.runtime.classpath" />
+  
+
+	<target name="test-missing-referenceFile-attribute">
+		<au:expectfailure expectedMessage="The 'referenceFile' attribute is not defined.">
+			<japi:checker />
+		</au:expectfailure>
+	</target>
+
+	<target name="test-missing-file-attribute">
+		<au:expectfailure expectedMessage="The 'file' attribute is not defined.">
+			<japi:checker referenceFile="${reference.jar.file}" />
+		</au:expectfailure>
+	</target>
+
+	<target name="test-check-identity">
+		<japi:checker referenceFile="${reference.jar.file}"
+				    file="${reference.jar.file}" />
+	</target>
+	
+	<target name="test-check-with-reference-and-new-file">
+		<au:expectfailure expectedMessage="You have 5 backward compatibility issues.">
+			<japi:checker referenceFile="${reference.jar.file}"
+				    file="${new.jar.file}" />
+		</au:expectfailure>
+	</target>
+
+	<target name="test-check-with-reference-and-new-file-with-classpath">
+		<au:expectfailure expectedMessage="You have 5 backward compatibility issues.">
+			<japi:checker referenceFile="${reference.jar.file}"
+				    file="${new.jar.file}">
+				<classpath>
+					<pathelement path="${findbugs.jar.file}" />
+				</classpath>
+				<referenceClasspath>
+					<pathelement path="${findbugs.jar.file}" />
+				</referenceClasspath>
+			</japi:checker>
+		</au:expectfailure>
+	</target>
+
+	<target name="test-check-with-reference-and-new-file-with-classpath-and-rules">
+		<au:expectfailure expectedMessage="You have 62 backward compatibility issues.">
+			<japi:checker referenceFile="${reference.jar.file}"
+				    file="${new.jar.file}">
+				<classpath>
+					<pathelement path="${findbugs.jar.file}" />
+				</classpath>
+				<referenceClasspath>
+					<pathelement path="${findbugs.jar.file}" />
+				</referenceClasspath>
+				<japi:ruleSet>
+					<rule classname="com.googlecode.japi.checker.rules.AllRules" />
+				</japi:ruleSet>
+			</japi:checker>
+		</au:expectfailure>
+	</target>
+</project>
