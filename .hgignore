@@ -51,4 +51,10 @@ syntax: regexp
 ^temp$
 syntax: regexp
 ^([^/]+/)*\.DS_Store$
+syntax: regexp
+^japi-checker-ant/target/.*$
+^japi-checker-ant/\.classpath$
+^japi-checker-ant/\.project$
+^japi-checker-ant/\.settings/.*$
+
 
