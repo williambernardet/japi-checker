@@ -29,10 +29,10 @@ public class CheckFieldChangeToTransient implements Rule {
             JavaItem reference, JavaItem newItem) {
         if (reference instanceof FieldData) {
             if (reference.isTransient() && !newItem.isTransient()) {
-                reporter.report(new Report(Level.ERROR, "The " + reference.getType() + " " + reference.getName() + " is not transient anymore.", reference, newItem));
+            	reporter.report(new Report(Level.ERROR, "The " + reference + " is not transient anymore.", reference, newItem));
             }
             if (!reference.isTransient() && newItem.isTransient()) {
-                reporter.report(new Report(Level.WARNING, "The " + reference.getType() + " " + reference.getName() + " is now transient.", reference, newItem));
+                reporter.report(new Report(Level.WARNING, "The " + reference + " is now transient.", reference, newItem));
             }
         }
     }

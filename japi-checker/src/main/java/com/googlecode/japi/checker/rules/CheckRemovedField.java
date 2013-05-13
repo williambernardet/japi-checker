@@ -39,8 +39,8 @@ public class CheckRemovedField implements Rule {
                         break;
                     }
                 }
-                if (!found && oldField.getVisibility() != Scope.PRIVATE) {
-                    reporter.report(new Report(Reporter.Level.ERROR, "Could not find " + oldField.getType() + " " + oldField.getName() + " in newer version.", reference, newItem));
+                if (!found && oldField.getVisibility().isHigherThan(Scope.NO_SCOPE)) {
+                	reporter.report(new Report(Reporter.Level.ERROR, "Could not find " + oldField + " in newer version.", reference, newItem));
                 }
             }
         }

@@ -29,9 +29,9 @@ public class CheckMethodChangedToFinal implements Rule {
     public void checkBackwardCompatibility(Reporter reporter,
             JavaItem reference, JavaItem newItem) {
         if (reference instanceof MethodData) {
-            if (Scope.PUBLIC == reference.getVisibility() || Scope.PROTECTED == reference.getVisibility()) {
+        	if (reference.getVisibility().isHigherThan(Scope.NO_SCOPE)) {
                 if (!reference.isFinal() && newItem.isFinal()) {
-                    reporter.report(new Report(Level.ERROR, "The method " + reference.getName() + " has been made final, this now prevents overriding.", reference, newItem));
+                	reporter.report(new Report(Level.ERROR, "The " + reference + " has been made final, this now prevents overriding.", reference, newItem));
                 }
             }
         }

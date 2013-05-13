@@ -102,4 +102,14 @@ public class MethodData extends JavaItem {
     public int getLineNumber() {
         return line;
     }
+    
+    /**
+     * Dump method as a string, so it can be used by rules to easily
+     * display it.
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+    	return getType() + " " + getName() + "(" + getDescriptor() + ")";
+    }
 }

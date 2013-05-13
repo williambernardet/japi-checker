@@ -42,17 +42,17 @@ public class CheckMethodExceptions implements Rule {
     @Override
     public void checkBackwardCompatibility(Reporter reporter,
             JavaItem reference, JavaItem newItem) {
-        if (reference instanceof MethodData && reference.getVisibility() != Scope.PRIVATE) {
+    	if (reference instanceof MethodData && reference.getVisibility().isHigherThan(Scope.NO_SCOPE)) {
             MethodData referenceMethod = (MethodData)reference;
             MethodData newMethod = (MethodData)newItem;
             for (String exception : referenceMethod.getExceptions()) {
                 if (!isCompatibleWithAnyOfTheException(newItem.getClassDataLoader(), exception, newMethod.getExceptions())) {
-                    reporter.report(new Report(Level.ERROR, referenceMethod.getName() + " is not throwing " + exception + " anymore.", reference, newItem));
+                	reporter.report(new Report(Level.ERROR, referenceMethod + " is not throwing " + exception + " anymore.", reference, newItem));
                 }
             }
             for (String exception : newMethod.getExceptions()) {
                 if (!hasCompatibleExceptionInItsHierarchy(newItem.getClassDataLoader(), exception, referenceMethod.getExceptions())) {
-                    reporter.report(new Report(Level.ERROR, referenceMethod.getName() + " is now throwing " + exception + ".", reference, newItem));
+                	reporter.report(new Report(Level.ERROR, referenceMethod + " is now throwing " + exception + ".", reference, newItem));
                 }
             }
         }

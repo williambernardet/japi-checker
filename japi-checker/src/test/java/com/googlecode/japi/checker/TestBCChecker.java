@@ -113,22 +113,22 @@ public class TestBCChecker extends AbstractBCCheckerUnitTest {
     @Test
     public void testCheckFieldChangeToStaticPublicScope() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(CheckFieldChangeToStatic.class, "**/PublicScopeFieldTestCases.class");
-        reporter.assertContains(Level.ERROR, "The field testPublicChangeToStatic is now static.");
-        reporter.assertContains(Level.ERROR, "The field testProtectedChangeToStatic is now static.");
-        reporter.assertContains(Level.ERROR, "The field testPublicChangeFromStatic is not static anymore.");
-        reporter.assertContains(Level.ERROR, "The field testProtectedChangeFromStatic is not static anymore.");
+        reporter.assertContains(Level.ERROR, "The field testPublicChangeToStatic(Ljava/lang/String;) is now static.");
+        reporter.assertContains(Level.ERROR, "The field testProtectedChangeToStatic(Ljava/lang/String;) is now static.");
+        reporter.assertContains(Level.ERROR, "The field testPublicChangeFromStatic(Ljava/lang/String;) is not static anymore.");
+        reporter.assertContains(Level.ERROR, "The field testProtectedChangeFromStatic(Ljava/lang/String;) is not static anymore.");
         assertEquals(4, reporter.count(Level.ERROR));
     }
 
     @Test
     public void testCheckFieldChangeToTransientPublicScope() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(CheckFieldChangeToTransient.class, "**/PublicScopeFieldTestCases.class");
-        reporter.assertContains(Level.WARNING, "The field publicNotTransientToTransient is now transient.");
-        reporter.assertContains(Level.WARNING, "The field protectedNotTransientToTransient is now transient.");
-        reporter.assertContains(Level.WARNING, "The field privateNotTransientToTransient is now transient.");
-        reporter.assertContains(Level.ERROR, "The field publicTransientToNoTransient is not transient anymore.");
-        reporter.assertContains(Level.ERROR, "The field protectedTransientToNoTransient is not transient anymore.");
-        reporter.assertContains(Level.ERROR, "The field privateTransientToNoTransient is not transient anymore.");
+        reporter.assertContains(Level.WARNING, "The field publicNotTransientToTransient(Ljava/lang/String;) is now transient.");
+        reporter.assertContains(Level.WARNING, "The field protectedNotTransientToTransient(Ljava/lang/String;) is now transient.");
+        reporter.assertContains(Level.WARNING, "The field privateNotTransientToTransient(Ljava/lang/String;) is now transient.");
+        reporter.assertContains(Level.ERROR, "The field publicTransientToNoTransient(Ljava/lang/String;) is not transient anymore.");
+        reporter.assertContains(Level.ERROR, "The field protectedTransientToNoTransient(Ljava/lang/String;) is not transient anymore.");
+        reporter.assertContains(Level.ERROR, "The field privateTransientToNoTransient(Ljava/lang/String;) is not transient anymore.");
         assertEquals(3, reporter.count(Level.WARNING));
         assertEquals(3, reporter.count(Level.ERROR));
     }
@@ -158,18 +158,18 @@ public class TestBCChecker extends AbstractBCCheckerUnitTest {
     @Test
     public void testCheckRemovedMethod() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(CheckRemovedMethod.class, "**/CheckRemovedMethod.class");
-        reporter.assertContains(Level.ERROR, "Could not find method publicMethodRemoved in newer version.");
-        reporter.assertContains(Level.ERROR, "Could not find method protectedMethodRemoved in newer version.");
+        reporter.assertContains(Level.ERROR, "Could not find method publicMethodRemoved(()V) in newer version.");
+        reporter.assertContains(Level.ERROR, "Could not find method protectedMethodRemoved(()V) in newer version.");
         assertEquals(2, reporter.count(Level.ERROR));
     }
     
     @Test
     public void testCheckMethodException() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(CheckMethodExceptions.class, "**/CheckMethodException.class");
-        reporter.assertContains(Level.ERROR, "publicAddedException is now throwing java/lang/Exception.");
-        reporter.assertContains(Level.ERROR, "protectedAddedException is now throwing java/lang/Exception.");
-        reporter.assertContains(Level.ERROR, "publicRemovedException is not throwing java/lang/Exception anymore.");
-        reporter.assertContains(Level.ERROR, "protectedRemovedException is not throwing java/lang/Exception anymore.");
+        reporter.assertContains(Level.ERROR, "method publicAddedException(()V) is now throwing java/lang/Exception.");
+        reporter.assertContains(Level.ERROR, "method protectedAddedException(()V) is now throwing java/lang/Exception.");
+        reporter.assertContains(Level.ERROR, "method publicRemovedException(()V) is not throwing java/lang/Exception anymore.");
+        reporter.assertContains(Level.ERROR, "method protectedRemovedException(()V) is not throwing java/lang/Exception anymore.");
         assertEquals(4, reporter.count(Level.ERROR));
     }
 
@@ -190,18 +190,18 @@ public class TestBCChecker extends AbstractBCCheckerUnitTest {
     @Test
     public void testCheckMethodChangedToFinal() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(CheckMethodChangedToFinal.class, "**/CheckMethodAccess.class");
-        reporter.assertContains(Level.ERROR, "The method publicToFinal has been made final, this now prevents overriding.");
-        reporter.assertContains(Level.ERROR, "The method protectedToFinal has been made final, this now prevents overriding.");
+        reporter.assertContains(Level.ERROR, "The method publicToFinal(()V) has been made final, this now prevents overriding.");
+        reporter.assertContains(Level.ERROR, "The method protectedToFinal(()V) has been made final, this now prevents overriding.");
         assertEquals(2, reporter.count(Level.ERROR));
     }
 
     @Test
     public void testCheckMethodChangedToStatic() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(CheckMethodChangedToStatic.class, "**/CheckMethodAccess.class");
-        reporter.assertContains(Level.ERROR, "The method publicToStatic has been made static.");
-        reporter.assertContains(Level.ERROR, "The method protectedToStatic has been made static.");
-        reporter.assertContains(Level.ERROR, "The method publicFromStatic is not static anymore.");
-        reporter.assertContains(Level.ERROR, "The method protectedFromStatic is not static anymore");
+        reporter.assertContains(Level.ERROR, "The method publicToStatic(()V) has been made static.");
+        reporter.assertContains(Level.ERROR, "The method protectedToStatic(()V) has been made static.");
+        reporter.assertContains(Level.ERROR, "The method publicFromStatic(()V) is not static anymore.");
+        reporter.assertContains(Level.ERROR, "The method protectedFromStatic(()V) is not static anymore");
         assertEquals(4, reporter.count(Level.ERROR));
     }
 

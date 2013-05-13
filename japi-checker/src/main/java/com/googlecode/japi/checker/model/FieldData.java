@@ -93,4 +93,14 @@ public class FieldData extends JavaItem {
     public String getType() {
         return "field";
     }
+    
+    /**
+     * Dump field as a string, so it can be used by rules to easily
+     * display it.
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+    	return getType() + " " + getName() + "(" + getDescriptor() + ")";
+    }
 }
