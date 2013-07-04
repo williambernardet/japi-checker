@@ -45,7 +45,7 @@
 	</target>
 
 	<target name="test-check-with-reference-and-new-file-with-classpath-and-rules">
-		<au:expectfailure expectedMessage="You have 61 backward compatibility issues.">
+		<au:expectfailure expectedMessage="You have 62 backward compatibility issues.">
 			<japi:checker referenceFile="${reference.jar.file}"
 				    file="${new.jar.file}">
 				<classpath>

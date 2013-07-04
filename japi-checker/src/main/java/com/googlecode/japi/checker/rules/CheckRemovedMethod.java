@@ -40,7 +40,7 @@ public class CheckRemovedMethod implements Rule {
                         break;
                     }
                 }
-                if (!found && oldMethod.getVisibility().isHigherThan(Scope.NO_SCOPE)) {
+                if (!found && oldMethod.getVisibility().isMoreVisibleThan(Scope.NO_SCOPE)) {
                 	reporter.report(new Report(Level.ERROR, "Could not find " + oldMethod + " in newer version.", reference, newItem));
                 }
             }

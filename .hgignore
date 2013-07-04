@@ -56,5 +56,9 @@ syntax: regexp
 ^japi-checker-ant/\.classpath$
 ^japi-checker-ant/\.project$
 ^japi-checker-ant/\.settings/.*$
-
+^japi-checker-cli/target/.*$
+^japi-checker-cli/\.classpath$
+^japi-checker-cli/\.project$
+^japi-checker-cli/\.settings/.*$
+^japi-checker-cli/bin/.*$
 

@@ -37,6 +37,11 @@
             <timezone>+2</timezone>
             <name>William Bernardet</name>
         </developer>
+        <developer>
+        	<name>Tomas Rohovsky</name>
+        	<id>trohovsky</id>
+        	<url>https://github.com/trohovsky</url>
+        </developer>
     </developers>
     
     <modules>
@@ -45,6 +50,7 @@
         <module>new-test-jar</module>
         <module>japi-checker-maven-plugin</module>
         <module>japi-checker-ant</module>
+        <module>japi-checker-cli</module>
     </modules>
     
     <distributionManagement>

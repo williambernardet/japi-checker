@@ -29,7 +29,7 @@ public class CheckMethodChangedToFinal implements Rule {
     public void checkBackwardCompatibility(Reporter reporter,
             JavaItem reference, JavaItem newItem) {
         if (reference instanceof MethodData) {
-        	if (reference.getVisibility().isHigherThan(Scope.NO_SCOPE)) {
+        	if (reference.getVisibility().isMoreVisibleThan(Scope.NO_SCOPE)) {
                 if (!reference.isFinal() && newItem.isFinal()) {
                 	reporter.report(new Report(Level.ERROR, "The " + reference + " has been made final, this now prevents overriding.", reference, newItem));
                 }

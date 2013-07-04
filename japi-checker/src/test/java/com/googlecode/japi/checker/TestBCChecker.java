@@ -29,6 +29,7 @@ import com.googlecode.japi.checker.rules.CheckInheritanceChanges;
 import com.googlecode.japi.checker.rules.CheckMethodChangedToFinal;
 import com.googlecode.japi.checker.rules.CheckMethodChangedToStatic;
 import com.googlecode.japi.checker.rules.CheckMethodExceptions;
+import com.googlecode.japi.checker.rules.CheckMethodVariableArity;
 import com.googlecode.japi.checker.rules.CheckRemovedMethod;
 import com.googlecode.japi.checker.rules.CheckSerialVersionUIDField;
 import com.googlecode.japi.checker.rules.CheckSuperClass;
@@ -262,4 +263,11 @@ public class TestBCChecker extends AbstractBCCheckerUnitTest {
     }
     
 
+    @Test
+    public void testArityChange() throws InstantiationException, IllegalAccessException, IOException {
+        BasicReporter reporter = check(CheckMethodVariableArity.class, "**/CheckMethodVariableArity.class");
+        assertEquals(2, reporter.count(Level.ERROR));
+        reporter.assertContains(Level.ERROR, "The parameter of the publicArityToArray has been changed from variable arity to array");
+        reporter.assertContains(Level.ERROR, "The parameter of the protectedArityToArray has been changed from variable arity to array");
+    }
 }

@@ -29,8 +29,8 @@ public class CheckFieldChangeOfType implements Rule {
     public void checkBackwardCompatibility(Reporter reporter,
             JavaItem reference, JavaItem newItem) {
         if (reference instanceof FieldData) {
-        	if (reference.getOwner().getVisibility().isHigherThan(Scope.NO_SCOPE)) {
-        		if (!((FieldData) reference).hasSameType((FieldData) newItem) && reference.getVisibility().isHigherThan(Scope.NO_SCOPE)) {
+        	if (reference.getOwner().getVisibility().isMoreVisibleThan(Scope.NO_SCOPE)) {
+        		if (!((FieldData) reference).hasSameType((FieldData) newItem) && reference.getVisibility().isMoreVisibleThan(Scope.NO_SCOPE)) {
                     reporter.report(new Report(Level.ERROR, "The " + reference.getType() + " " + reference.getName() +
                             " has been modified from " + 
                             ((FieldData) reference).getDescriptor() + " to "+

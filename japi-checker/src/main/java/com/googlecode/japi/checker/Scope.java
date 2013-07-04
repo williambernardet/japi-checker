@@ -37,7 +37,7 @@ public enum Scope {
      * @return Returns true if the scope is more visible
      *         than the give scope, false otherwise.
      */
-    public boolean isHigherThan(Scope scope) {
+    public boolean isMoreVisibleThan(Scope scope) {
     	return this.getValue() > scope.getValue(); 
     }
 }

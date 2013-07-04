@@ -42,7 +42,7 @@ public class CheckMethodExceptions implements Rule {
     @Override
     public void checkBackwardCompatibility(Reporter reporter,
             JavaItem reference, JavaItem newItem) {
-    	if (reference instanceof MethodData && reference.getVisibility().isHigherThan(Scope.NO_SCOPE)) {
+    	if (reference instanceof MethodData && reference.getVisibility().isMoreVisibleThan(Scope.NO_SCOPE)) {
             MethodData referenceMethod = (MethodData)reference;
             MethodData newMethod = (MethodData)newItem;
             for (String exception : referenceMethod.getExceptions()) {

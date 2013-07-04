@@ -33,6 +33,7 @@ public abstract class JavaItem {
     private boolean isFinal;
     private boolean isStatic;
     private boolean isTransient;
+    private boolean isVariableArity;
     private ClassDataLoader classDataLoader;
     private List<AnnotationData> annotations = new ArrayList<AnnotationData>();
 
@@ -45,6 +46,7 @@ public abstract class JavaItem {
         this.setFinal((access & Opcodes.ACC_FINAL) == Opcodes.ACC_FINAL);
         this.setStatic((access & Opcodes.ACC_STATIC) == Opcodes.ACC_STATIC);
         this.setTransient((access & Opcodes.ACC_TRANSIENT) == Opcodes.ACC_TRANSIENT);
+        this.setVariableArity((access & Opcodes.ACC_VARARGS) == Opcodes.ACC_VARARGS);
         this.setClassDataLoader(loader);
     }
 
@@ -152,7 +154,13 @@ public abstract class JavaItem {
         this.name = name;
     }
 
-    
+	public boolean isVariableArity() {
+		return isVariableArity;
+	}
+
+	protected void setVariableArity(boolean isVariableArity) {
+		this.isVariableArity = isVariableArity;
+	}
     
     /**
      * @return the owner

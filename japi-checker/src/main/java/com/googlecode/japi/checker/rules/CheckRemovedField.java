@@ -39,7 +39,7 @@ public class CheckRemovedField implements Rule {
                         break;
                     }
                 }
-                if (!found && oldField.getVisibility().isHigherThan(Scope.NO_SCOPE)) {
+                if (!found && oldField.getVisibility().isMoreVisibleThan(Scope.NO_SCOPE)) {
                 	reporter.report(new Report(Reporter.Level.ERROR, "Could not find " + oldField + " in newer version.", reference, newItem));
                 }
             }

@@ -29,7 +29,7 @@ public class CheckMethodChangedToStatic implements Rule {
     public void checkBackwardCompatibility(Reporter reporter,
             JavaItem reference, JavaItem newItem) {
         if (reference instanceof MethodData) {
-        	if (reference.getVisibility().isHigherThan(Scope.NO_SCOPE)) {
+        	if (reference.getVisibility().isMoreVisibleThan(Scope.NO_SCOPE)) {
                 if (!reference.isStatic() && newItem.isStatic()) {
                 	reporter.report(new Report(Level.ERROR, "The " + reference + " has been made static.", reference, newItem));
                 } else if (reference.isStatic() && !newItem.isStatic()) {
