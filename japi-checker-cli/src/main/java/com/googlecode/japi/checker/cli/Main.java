@@ -17,8 +17,14 @@ package com.googlecode.japi.checker.cli;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -50,8 +56,27 @@ public class Main {
 		this.args = args;
 	}
 	
+	private String getVersion() {
+		InputStream is = this.getClass().getClassLoader().getResourceAsStream("META-INF/maven/com.googlecode.japi-checker/japi-checker-cli/pom.properties");
+		if (is != null) {
+			 try {
+				Properties properties = new Properties();
+				properties.load(is);
+				return properties.getProperty("version");
+			} catch (IOException e) {
+				// Swallow the error...
+			}
+		}
+		return "development";
+	}
+	
+	private String getHeader() {
+		return HELP_HEADER;
+	}
 	
 	public int run() {
+		System.out.println("japi-checker-cli " +  getVersion() + " - https://code.google.com/p/japi-checker/");
+		System.out.println("");
 		boolean reportSourceIncompatibilities = true;		
 		// configuring the CLI options
 		Options options = new Options();
@@ -66,7 +91,7 @@ public class Main {
 			cmdLine = parser.parse(options, args);
 			if (cmdLine.hasOption("h")) {
 				HelpFormatter formatter = new HelpFormatter();
-				formatter.printHelp(HELP_CMDLINE, HELP_HEADER, options, null);
+				formatter.printHelp(HELP_CMDLINE, getHeader(), options, null);
 				return 0;
 			}
 			if (cmdLine.getArgs().length != 2) {
@@ -78,7 +103,7 @@ public class Main {
 		} catch (ParseException e) {
 			System.out.println("Error parsing command line: " + e.getMessage());
 			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp(HELP_CMDLINE, HELP_HEADER, options, null);
+			formatter.printHelp(HELP_CMDLINE, getHeader(), options, null);
 			return -1;
 		}
 		
