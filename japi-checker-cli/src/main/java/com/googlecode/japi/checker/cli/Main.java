@@ -36,6 +36,7 @@ import org.apache.commons.cli.ParseException;
 import com.googlecode.japi.checker.BCChecker;
 import com.googlecode.japi.checker.Reporter;
 import com.googlecode.japi.checker.Rule;
+import com.googlecode.japi.checker.Severity;
 import com.googlecode.japi.checker.Utils;
 import com.googlecode.japi.checker.rules.AllRules;
 import com.googlecode.japi.checker.rules.CheckMethodVariableArity;
@@ -158,9 +159,9 @@ public class Main {
         // Running the check...
 		try {
 			checker.checkBacwardCompatibility(reporter, rules);
-			System.out.println("Error count: " + reporter.getCount(Reporter.Level.ERROR));
-			System.out.println("Warning count: " + reporter.getCount(Reporter.Level.WARNING));
-			if (reporter.getCount(Reporter.Level.ERROR) > 0) {
+			System.out.println("Error count: " + reporter.getCount(Severity.ERROR));
+			System.out.println("Warning count: " + reporter.getCount(Severity.WARNING));
+			if (reporter.getCount(Severity.ERROR) > 0) {
 				return -1;
 			}
 		} catch (IOException e) {

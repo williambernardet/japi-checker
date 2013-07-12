@@ -19,6 +19,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 
 import com.googlecode.japi.checker.Reporter;
+import com.googlecode.japi.checker.Severity;
 import com.googlecode.japi.checker.model.MethodData;
 
 /**
@@ -48,24 +49,24 @@ class AntReporter implements Reporter {
 	}
 
 	private int getAntLogLevel(Report report) {
-		if (report.level == Reporter.Level.ERROR) {
+		if (report.getSeverity() == Severity.ERROR) {
 			return Project.MSG_ERR;
-		} else if (report.level == Reporter.Level.WARNING) {
+		} else if (report.getSeverity() == Severity.WARNING) {
 			return Project.MSG_WARN;
 		}
 		return Project.MSG_INFO;
 	}
 	
     private String format(Report report) {
-    	if (report.source == null) {
-    		return report.message;
+    	if (report.getSource() == null) {
+    		return report.getMessage();
     	}
-    	return report.level.toString() + ": " + report.source + getLine(report) + ": " + report.message;
+    	return report.getSeverity().toString() + ": " + report.getSource() + getLine(report) + ": " + report.getMessage();
     }
     
     private static String getLine(Report report) {
-        if (report.newItem instanceof MethodData) {
-            return "(" + ((MethodData)report.newItem).getLineNumber() + ")";
+        if (report.getNewItem() instanceof MethodData) {
+            return "(" + ((MethodData)report.getNewItem()).getLineNumber() + ")";
         }
         return "";
     }

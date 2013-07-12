@@ -19,31 +19,50 @@ import com.googlecode.japi.checker.model.ClassData;
 import com.googlecode.japi.checker.model.JavaItem;
 
 public interface Reporter {
-    public enum Level {ERROR, WARNING, INFO, DEBUG};
     
     void report(Report report);
     
     public static class Report {
-        public final Level level;
-        public final String message;
-        public final JavaItem referenceItem; // can be null
-        public final JavaItem newItem; // can be null
-        public final String source; // can be null
+        private final Severity severity;
+        private final String message;
+        private final JavaItem referenceItem; // can be null
+        private final JavaItem newItem; // can be null
+        private final String source; // can be null
         
-        public Report(Level level, String message, JavaItem referenceItem, JavaItem newItem) {
-            this.level = level;
+        public Report(Severity severity, String message, JavaItem referenceItem, JavaItem newItem) {
+            this.severity = severity;
             this.message = message;
             this.referenceItem = referenceItem;
             this.newItem = newItem;
             this.source = (referenceItem.getOwner() == null ? ((ClassData)referenceItem).getFilename() : referenceItem.getOwner().getFilename());
         }
         
-        public Report(Level level, String message) {
-            this.level = level;
+        public Report(Severity severity, String message) {
+            this.severity = severity;
             this.message = message;
             this.referenceItem = null;
             this.newItem = null;
             this.source = null; 
+        }
+        
+        public Severity getSeverity() {
+        	return severity;
+        }
+
+        public String getMessage() {
+        	return message;
+        }
+        
+        public JavaItem getReferenceItem() {
+        	return referenceItem;
+        }
+        
+        public JavaItem getNewItem() {
+        	return newItem;
+        }
+
+        public String getSource() {
+        	return source;
         }
     }
     

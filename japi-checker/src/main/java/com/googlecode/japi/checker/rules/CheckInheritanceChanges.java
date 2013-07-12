@@ -17,7 +17,7 @@ package com.googlecode.japi.checker.rules;
 
 import com.googlecode.japi.checker.Reporter;
 import com.googlecode.japi.checker.Rule;
-import com.googlecode.japi.checker.Reporter.Level;
+import com.googlecode.japi.checker.Severity;
 import com.googlecode.japi.checker.Reporter.Report;
 import com.googlecode.japi.checker.model.ClassData;
 import com.googlecode.japi.checker.model.JavaItem;
@@ -30,13 +30,13 @@ public class CheckInheritanceChanges implements Rule {
         if (reference instanceof ClassData) {
             // Check extends...
             if (!((ClassData) reference).getSuperName().equals(((ClassData) newItem).getSuperName())) {
-                reporter.report(new Report(Level.ERROR, reference.getName() + " extends " + ((ClassData) newItem).getSuperName() +
+                reporter.report(new Report(Severity.ERROR, reference.getName() + " extends " + ((ClassData) newItem).getSuperName() +
                         " and not " + ((ClassData) reference).getSuperName() + " anymore.", reference, newItem));
             }
             // Check interfaces
             for (String ifaceRef : ((ClassData) reference).getInterfaces()) {
                 if (!((ClassData) newItem).getInterfaces().contains(ifaceRef)) {
-                    reporter.report(new Report(Level.ERROR, reference.getName() + " is not implementing " + ifaceRef + " anymore.", reference, newItem));
+                    reporter.report(new Report(Severity.ERROR, reference.getName() + " is not implementing " + ifaceRef + " anymore.", reference, newItem));
                 }
             }
         }

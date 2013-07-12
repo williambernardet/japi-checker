@@ -18,14 +18,15 @@ package com.googlecode.japi.checker.maven.plugin;
 import org.apache.maven.plugin.logging.Log;
 
 import com.googlecode.japi.checker.Reporter;
+import com.googlecode.japi.checker.Severity;
 import com.googlecode.japi.checker.model.MethodData;
 
 public class LogReporter implements Reporter {
 
     private Log log;
-    private Level display = Level.WARNING;
+    private Severity display = Severity.WARNING;
     
-    public LogReporter(Log log, Level display) {
+    public LogReporter(Log log, Severity display) {
         this(log);
         this.display = display;
     }
@@ -35,29 +36,29 @@ public class LogReporter implements Reporter {
     }
     
     public void report(Report report) {
-        if (report.level.ordinal() <= display.ordinal()) {
-            if (report.level == Level.ERROR) {
+        if (report.getSeverity().ordinal() <= display.ordinal()) {
+            if (report.getSeverity() == Severity.ERROR) {
                 log.error(format(report));
-            } else if (report.level == Level.WARNING) {
+            } else if (report.getSeverity() == Severity.WARNING) {
                 log.warn(format(report));
-            } else if (report.level == Level.INFO) {
+            } else if (report.getSeverity() == Severity.INFO) {
                 log.info(format(report));
-            } else if (report.level == Level.DEBUG) {
+            } else if (report.getSeverity() == Severity.DEBUG) {
                 log.debug(format(report));
             }
         }
     }
 
     private String format(Report report) {
-    	if (report.source == null) {
-    		return report.message;
+    	if (report.getSource() == null) {
+    		return report.getMessage();
     	}
-        return report.source + getLine(report) + ": " + report.message;
+        return report.getSource() + getLine(report) + ": " + report.getMessage();
     }
     
     private static String getLine(Report report) {
-        if (report.newItem instanceof MethodData) {
-            return "(" + ((MethodData)report.newItem).getLineNumber() + ")";
+        if (report.getNewItem() instanceof MethodData) {
+            return "(" + ((MethodData)report.getNewItem()).getLineNumber() + ")";
         }
         return "";
     }

@@ -24,20 +24,20 @@ import com.googlecode.japi.checker.Reporter;
  */
 public class SeverityCountReporter implements Reporter {
     private int count;
-    private Reporter.Level severity;
+    private Severity severity;
     
     /**
      * Default constructor using ERROR severity.
      */
     public SeverityCountReporter() {
-    	this(Reporter.Level.ERROR);
+    	this(Severity.ERROR);
     }
 
     /**
      * Count for a custom level.
      * @param severity the severity to look for.
      */
-    public SeverityCountReporter(Reporter.Level severity) {
+    public SeverityCountReporter(Severity severity) {
     	this.severity = severity; 
     }
 
@@ -46,7 +46,7 @@ public class SeverityCountReporter implements Reporter {
      */
     @Override
     public void report(Report report) {
-        if (severity == report.level) {
+        if (severity == report.getSeverity()) {
             count++;
         }
     }

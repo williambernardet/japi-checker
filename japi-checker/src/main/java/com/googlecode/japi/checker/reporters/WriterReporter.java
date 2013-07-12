@@ -42,16 +42,16 @@ public class WriterReporter implements Reporter {
     }
 
     protected String format(Report report) {
-        if (report.source != null) {
-            return report.level.name() + ": " + report.source + getLine(report) + ": " + report.message;
+        if (report.getSource() != null) {
+            return report.getSeverity().name() + ": " + report.getSource() + getLine(report) + ": " + report.getMessage();
         } else {
-            return report.level.name() + ": " + report.message;
+            return report.getSeverity().name() + ": " + report.getMessage();
         }
     }
     
     protected static String getLine(Report report) {
-        if (report.newItem != null && report.newItem instanceof MethodData) {
-            return "(" + ((MethodData)report.newItem).getLineNumber() + ")";
+        if (report.getNewItem() != null && report.getNewItem() instanceof MethodData) {
+            return "(" + ((MethodData)report.getNewItem()).getLineNumber() + ")";
         }
         return "";
     }

@@ -19,6 +19,7 @@ import com.googlecode.japi.checker.Reporter;
 import com.googlecode.japi.checker.Scope;
 import com.googlecode.japi.checker.Reporter.Report;
 import com.googlecode.japi.checker.Rule;
+import com.googlecode.japi.checker.Severity;
 import com.googlecode.japi.checker.model.ClassData;
 import com.googlecode.japi.checker.model.JavaItem;
 
@@ -30,12 +31,12 @@ public class CheckChangeOfScope implements Rule {
         if (reference.getOwner() == null || (reference.getOwner().getVisibility() == Scope.PUBLIC || reference.getOwner().getVisibility() == Scope.PROTECTED)) {
             if (newItem.getVisibility().getValue() < reference.getVisibility().getValue()) {
                 // lower visibility
-                reporter.report(new Report(Reporter.Level.ERROR, "The visibility of the " + newItem.getName() + " " + newItem.getType() + " has been changed from " +
+                reporter.report(new Report(Severity.ERROR, "The visibility of the " + newItem.getName() + " " + newItem.getType() + " has been changed from " +
                     reference.getVisibility() + " to " + newItem.getVisibility(), reference, newItem));
             } else if (newItem.getVisibility().getValue() == reference.getVisibility().getValue()) {
-                reporter.report(new Report(Reporter.Level.INFO, "The visibility of the " + newItem.getName() + " " + newItem.getType() + " has not changed", reference, newItem));
+                reporter.report(new Report(Severity.INFO, "The visibility of the " + newItem.getName() + " " + newItem.getType() + " has not changed", reference, newItem));
             } else {
-                reporter.report(new Report(Reporter.Level.WARNING, "The visibility of the " + newItem.getName() + " " + newItem.getType() + " has been changed from " +
+                reporter.report(new Report(Severity.WARNING, "The visibility of the " + newItem.getName() + " " + newItem.getType() + " has been changed from " +
                     reference.getVisibility() + " to " + newItem.getVisibility(), reference, newItem));
             }
         }

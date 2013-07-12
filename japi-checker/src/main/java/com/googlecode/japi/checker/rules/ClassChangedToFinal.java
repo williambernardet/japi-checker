@@ -17,7 +17,7 @@ package com.googlecode.japi.checker.rules;
 
 import com.googlecode.japi.checker.Reporter;
 import com.googlecode.japi.checker.Rule;
-import com.googlecode.japi.checker.Reporter.Level;
+import com.googlecode.japi.checker.Severity;
 import com.googlecode.japi.checker.Reporter.Report;
 import com.googlecode.japi.checker.model.ClassData;
 import com.googlecode.japi.checker.model.JavaItem;
@@ -29,7 +29,7 @@ public class ClassChangedToFinal implements Rule {
             JavaItem reference, JavaItem newItem) {
         if (reference instanceof ClassData) {
             if (!reference.isFinal() && newItem.isFinal()) {
-                reporter.report(new Report(Level.ERROR, "The class " + reference.getName() + " has been made final, this breaks inheritance.", reference, newItem));
+                reporter.report(new Report(Severity.ERROR, "The class " + reference.getName() + " has been made final, this breaks inheritance.", reference, newItem));
             }
         }
     }

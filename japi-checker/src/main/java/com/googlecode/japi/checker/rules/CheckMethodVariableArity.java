@@ -19,6 +19,7 @@ import com.googlecode.japi.checker.Reporter;
 import com.googlecode.japi.checker.Scope;
 import com.googlecode.japi.checker.Reporter.Report;
 import com.googlecode.japi.checker.Rule;
+import com.googlecode.japi.checker.Severity;
 import com.googlecode.japi.checker.model.JavaItem;
 import com.googlecode.japi.checker.model.MethodData;
 
@@ -52,7 +53,7 @@ public class CheckMethodVariableArity implements Rule {
     			reference.getVisibility().isMoreVisibleThan(Scope.NO_SCOPE) &&
     			((MethodData) reference).isVariableArity() &&
     			!((MethodData) newItem).isVariableArity()) {
-			reporter.report(new Report(Reporter.Level.ERROR, "The parameter of the " + newItem.getName()
+			reporter.report(new Report(Severity.ERROR, "The parameter of the " + newItem.getName()
 					+ " has been changed from variable arity to array", newItem, reference));
         }
     }

@@ -16,7 +16,7 @@
 package com.googlecode.japi.checker.rules;
 
 import com.googlecode.japi.checker.Reporter;
-import com.googlecode.japi.checker.Reporter.Level;
+import com.googlecode.japi.checker.Severity;
 import com.googlecode.japi.checker.Reporter.Report;
 import com.googlecode.japi.checker.model.FieldData;
 import com.googlecode.japi.checker.model.JavaItem;
@@ -31,7 +31,7 @@ public class CheckFieldChangeOfType implements Rule {
         if (reference instanceof FieldData) {
         	if (reference.getOwner().getVisibility().isMoreVisibleThan(Scope.NO_SCOPE)) {
         		if (!((FieldData) reference).hasSameType((FieldData) newItem) && reference.getVisibility().isMoreVisibleThan(Scope.NO_SCOPE)) {
-                    reporter.report(new Report(Level.ERROR, "The " + reference.getType() + " " + reference.getName() +
+                    reporter.report(new Report(Severity.ERROR, "The " + reference.getType() + " " + reference.getName() +
                             " has been modified from " + 
                             ((FieldData) reference).getDescriptor() + " to "+
                             ((FieldData) newItem).getDescriptor(), reference, newItem));

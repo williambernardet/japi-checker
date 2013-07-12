@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipFile;
 
-import com.googlecode.japi.checker.Reporter.Level;
+import com.googlecode.japi.checker.Severity;
 import com.googlecode.japi.checker.Reporter.Report;
 import com.googlecode.japi.checker.model.ClassData;
 import com.googlecode.japi.checker.utils.AntPatternMatcher;
@@ -78,15 +78,15 @@ public class BCChecker {
         }
 
         ClassDataLoader referenceDataLoader = classDataLoaderFactory.createClassDataLoader();
-        reporter.report(new Report(Level.INFO, "Reading reference artifact: " + reference));
+        reporter.report(new Report(Severity.INFO, "Reading reference artifact: " + reference));
         referenceDataLoader.read(reference.toURI());
         for (File file : this.referenceClasspath) {
             try {
-                reporter.report(new Report(Level.INFO, "Reading reference dependency: " + file));
+                reporter.report(new Report(Severity.INFO, "Reading reference dependency: " + file));
                 referenceDataLoader.read(file.toURI());
             } catch (ReadClassException e){
                 if (this.shouldWarnOnDependencyLoadingError()) {
-                    reporter.report(new Report(Level.WARNING, e.getMessage()));
+                    reporter.report(new Report(Severity.WARNING, e.getMessage()));
                 } else {
                     throw e;
                 }
@@ -94,15 +94,15 @@ public class BCChecker {
         }
         List<ClassData> referenceData = referenceDataLoader.getClasses(reference.toURI(), includes, excludes);
         ClassDataLoader newArtifactDataLoader = classDataLoaderFactory.createClassDataLoader();
-        reporter.report(new Report(Level.INFO, "Reading artifact: " + newArtifact));
+        reporter.report(new Report(Severity.INFO, "Reading artifact: " + newArtifact));
         newArtifactDataLoader.read(newArtifact.toURI());
         for (File file : this.newArtifactClasspath) {
             try {
-                reporter.report(new Report(Level.INFO, "Reading dependency: " + file));
+                reporter.report(new Report(Severity.INFO, "Reading dependency: " + file));
                 newArtifactDataLoader.read(file.toURI());
             } catch (ReadClassException e){
                 if (this.shouldWarnOnDependencyLoadingError()) {
-                    reporter.report(new Report(Level.WARNING, e.getMessage()));
+                    reporter.report(new Report(Severity.WARNING, e.getMessage()));
                 } else {
                     throw e;
                 }
@@ -122,7 +122,7 @@ public class BCChecker {
                 }
             }
             if (!found && clazz.getVisibility() == Scope.PUBLIC) {
-                reporter.report(new Report(Level.ERROR, "Public class " + clazz.getName() + " has been removed.", clazz, null));
+                reporter.report(new Report(Severity.ERROR, "Public class " + clazz.getName() + " has been removed.", clazz, null));
             }
         }
     }

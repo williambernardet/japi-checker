@@ -17,7 +17,7 @@ package com.googlecode.japi.checker.rules;
 
 import com.googlecode.japi.checker.Reporter;
 import com.googlecode.japi.checker.Rule;
-import com.googlecode.japi.checker.Reporter.Level;
+import com.googlecode.japi.checker.Severity;
 import com.googlecode.japi.checker.Reporter.Report;
 import com.googlecode.japi.checker.Scope;
 import com.googlecode.japi.checker.model.JavaItem;
@@ -31,7 +31,7 @@ public class CheckMethodChangedToFinal implements Rule {
         if (reference instanceof MethodData) {
         	if (reference.getVisibility().isMoreVisibleThan(Scope.NO_SCOPE)) {
                 if (!reference.isFinal() && newItem.isFinal()) {
-                	reporter.report(new Report(Level.ERROR, "The " + reference + " has been made final, this now prevents overriding.", reference, newItem));
+                	reporter.report(new Report(Severity.ERROR, "The " + reference + " has been made final, this now prevents overriding.", reference, newItem));
                 }
             }
         }

@@ -21,7 +21,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.googlecode.japi.checker.Reporter.Level;
+import com.googlecode.japi.checker.Severity;
 import com.googlecode.japi.checker.rules.CheckJSR305;
 
 public class TestJSR305 extends AbstractBCCheckerUnitTest {
@@ -34,7 +34,7 @@ public class TestJSR305 extends AbstractBCCheckerUnitTest {
     public void testCheckJSR305NonNullRemoved() throws InstantiationException,
         IllegalAccessException, IOException {
         BasicReporter reporter = check(CheckJSR305.class, "**/CheckNonnull.class");
-        assertEquals(4, reporter.count(Level.ERROR));
+        assertEquals(4, reporter.count(Severity.ERROR));
     }
 
 }

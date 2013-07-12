@@ -112,13 +112,13 @@ public class AbstractBCCheckerUnitTest {
         
         @Override
         public void report(Report report) {
-            System.out.println(report.level.toString() + ": " + report.source + getLine(report) + ": " + report.message);
+            System.out.println(report.getSeverity().toString() + ": " + report.getSource() + getLine(report) + ": " + report.getMessage());
             messages.add(report);
         }
         
         private static String getLine(Report report) {
-            if (report.newItem instanceof MethodData) {
-                return "(" + ((MethodData)report.newItem).getLineNumber() + ")";
+            if (report.getNewItem() instanceof MethodData) {
+                return "(" + ((MethodData)report.getNewItem()).getLineNumber() + ")";
             }
             return "";
         }
@@ -127,19 +127,19 @@ public class AbstractBCCheckerUnitTest {
             return messages;
         }
 
-        public int count(Level level) {
+        public int count(Severity severity) {
             int count = 0;
             for (Report message : messages) {
-                if (message.level == level) {
+                if (message.getSeverity() == severity) {
                     count++;
                 }
             }
             return count;
         }
         
-        public void assertContains(Level level, String str) {
+        public void assertContains(Severity severity, String str) {
             for (Report message : messages) {
-                if (message.level == level && message.message.contains(str)) {
+                if (message.getSeverity() == severity && message.getMessage().contains(str)) {
                     return;
                 }
             }
