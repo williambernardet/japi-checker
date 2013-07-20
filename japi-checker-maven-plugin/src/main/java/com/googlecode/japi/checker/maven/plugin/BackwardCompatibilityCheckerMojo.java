@@ -168,7 +168,7 @@ public class BackwardCompatibilityCheckerMojo
 
             try {
                 // Creating a new checker which compare the generated artifact against the provided reference.
-                BCChecker checker = new BCChecker(referenceArtifact.getFile(), artifact.getFile());
+                BCChecker checker = new BCChecker();
                 
                 for (Artifact artifact : ((List<Artifact>)project.getCompileArtifacts())) {
                     this.getLog().debug("Adding new artifact dependency: " + artifact.getFile().toString());
@@ -188,7 +188,9 @@ public class BackwardCompatibilityCheckerMojo
             
                 // Running the check...
                 this.getLog().info("Checking backward compatibility of " + artifact.toString() + " against " + referenceArtifact.toString());
-                checker.checkBacwardCompatibility(mux, getRuleInstances());
+                checker.setReporter(mux);
+                checker.setRules(getRuleInstances());
+                checker.checkBacwardCompatibility(referenceArtifact.getFile(), artifact.getFile());
                 if (ec.hasSeverity()) {
                     getLog().error("You have " + ec.getCount() + " backward compatibility issues.");
                     throw new MojoFailureException("You have " + ec.getCount() + " backward compatibility issues.");

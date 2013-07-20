@@ -84,7 +84,7 @@ public class BytecodeBackwardCompatibilityCheckerTask extends Task {
 		}
 		log("Checking " + getFile().getAbsolutePath() + " backward compatibility against " + getReferenceFile().getAbsolutePath());
 		try {
-			BCChecker checker = new BCChecker(getReferenceFile(), getFile());
+			BCChecker checker = new BCChecker();
             
 			// Configuring the reporting
 			MuxReporter mux = new MuxReporter();
@@ -123,7 +123,9 @@ public class BytecodeBackwardCompatibilityCheckerTask extends Task {
             	}
             }
             // Running the check...
-			checker.checkBacwardCompatibility(mux, rules);
+            checker.setReporter(mux);
+            checker.setRules(rules);
+			checker.checkBacwardCompatibility(getReferenceFile(), getFile());
 			
 			// Summary, failing ant in case of error...
             if (ec.hasSeverity()) {

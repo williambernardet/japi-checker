@@ -178,7 +178,7 @@ public class Main {
             }
         }
 
-        BCChecker checker = new BCChecker(reference, newArtifact);
+        BCChecker checker = new BCChecker();
 
         // Populating the classpaths, reference and then for tested artifact.
         if (cmdLine.hasOption("rcp")) {
@@ -207,7 +207,9 @@ public class Main {
         }
         // Running the check...
         try {
-            checker.checkBacwardCompatibility(reporter, rules);
+            checker.setReporter(reporter);
+            checker.setRules(rules);
+            checker.checkBacwardCompatibility(reference, newArtifact);
             System.out.println("Error count: "
                     + reporter.getCount(Severity.ERROR));
             System.out.println("Warning count: "

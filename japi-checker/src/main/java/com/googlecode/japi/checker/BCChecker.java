@@ -20,63 +20,121 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.zip.ZipFile;
 
 import com.googlecode.japi.checker.Severity;
 import com.googlecode.japi.checker.Reporter.Report;
 import com.googlecode.japi.checker.model.ClassData;
 import com.googlecode.japi.checker.utils.AntPatternMatcher;
 
+/**
+ * The class driving the backward compatibility checks.
+ * It handles the Rules, Reporter, dependencies and
+ *  include/exclude mechanism for the checking.
+ *  
+ * @author william.bernardet@gmail.com
+ * 
+ */
 public class BCChecker {
-    private File reference;
-    private File newArtifact;
     private List<File> referenceClasspath = new ArrayList<File>();
     private List<File> newArtifactClasspath = new ArrayList<File>();
     private List<AntPatternMatcher> includes = new ArrayList<AntPatternMatcher>();
     private List<AntPatternMatcher> excludes = new ArrayList<AntPatternMatcher>();
     private ClassDataLoaderFactory classDataLoaderFactory = new DefaultClassDataLoaderFactory();
     private boolean warnOnDependencyLoadingError;
+    private Reporter reporter;
+    private List<Rule> rules = Collections.emptyList();
     
-    public BCChecker(File reference, File newArtifact) {
+ 
+    /**
+     * Add a path either a jar or a directory to the reference artifact classpath.
+     * @param path
+     */
+    public void addToReferenceClasspath(File path) {
+        this.referenceClasspath.add(path);
+    }
+
+    /**
+     * Add a path either a jar or a directory to the new artifact classpath.
+     * @param path
+     */
+    public void addToNewArtifactClasspath(File path) {
+        this.newArtifactClasspath.add(path);
+    }
+    
+    /**
+     * Add an include pattern for the class file scanning.
+     * e.g: org/myproject/mypackage/api/&#42;&#42;/&#42;.class
+     * @param include
+     */
+    public void addInclude(String include) {
+        includes.add(new AntPatternMatcher(include));
+    }
+
+    /**
+     * Add an exclude pattern for the class file scanning.
+     * e.g: org/myproject/mypackage/api/&#42;&#42;/&#42;.class
+     * @param include
+     */
+    public void addExclude(String exclude) {
+        excludes.add(new AntPatternMatcher(exclude));
+    }
+
+    /**
+     * Defines a custom reporter.
+     * @param reporter
+     */
+    public void setReporter(Reporter reporter) {
+        this.reporter = reporter;
+    }
+
+    /**
+     * Get the current reporter.
+     * @return
+     */
+    public Reporter getReporter() {
+        return this.reporter;
+    }
+    
+    /**
+     * Defines the rules to apply during the check.
+     * @param rules
+     */
+    public void setRules(List<Rule> rules) {
+        if (rules == null) {
+            rules = Collections.emptyList();
+        }
+        this.rules = rules;
+    }
+
+    /**
+     * Run the check between the reference and the newArtifact.
+     * @param reference
+     * @param newArtifact
+     * @throws IOException
+     */
+    public void checkBacwardCompatibility(File reference, File newArtifact) throws IOException {
         if (reference == null) {
             throw new IllegalArgumentException("The reference parameter cannot be null.");
         }
         if (newArtifact == null) {
             throw new IllegalArgumentException("The newArtifact parameter cannot be null.");
         }
-        if (!reference.isDirectory() && !isArchive(reference)) {
+        if (!reference.isDirectory() && !Utils.isArchive(reference)) {
             throw new IllegalArgumentException("reference must be either a directory" +
                     " or a jar (or a zip kind of archive) file");
         }
-        if (!newArtifact.isDirectory() && !isArchive(newArtifact)) {
+        if (!newArtifact.isDirectory() && !Utils.isArchive(newArtifact)) {
             throw new IllegalArgumentException("new artifact must be either a directory" + 
                     " or a jar (or a zip kind of archive) file");
         }
-        this.reference = reference;
-        this.newArtifact = newArtifact;
-    }
- 
-    public void addToReferenceClasspath(File path) {
-        this.referenceClasspath.add(path);
-    }
-
-    public void addToNewArtifactClasspath(File path) {
-        this.newArtifactClasspath.add(path);
-    }
-    
-    public void addInclude(String include) {
-        includes.add(new AntPatternMatcher(include));
-    }
-
-    public void addExclude(String exclude) {
-        excludes.add(new AntPatternMatcher(exclude));
-    }
-    
-    public void checkBacwardCompatibility(Reporter reporter, List<Rule> rules) throws IOException {
-        if (rules == null) {
-            rules = Collections.emptyList();
+        Reporter reporter = this.getReporter();
+        if (reporter == null) {
+            // if reporter is not defined just stub it...
+            reporter = new Reporter() {
+                @Override
+                public void report(Report report) { }
+            };
         }
-
         ClassDataLoader referenceDataLoader = classDataLoaderFactory.createClassDataLoader();
         reporter.report(new Report(Severity.INFO, "Reading reference artifact: " + reference));
         referenceDataLoader.read(reference.toURI());
@@ -127,27 +185,9 @@ public class BCChecker {
         }
     }
     
-    private boolean isArchive(File file) {
-        ZipFile zf = null;
-        try {
-            zf = new ZipFile(file);
-            zf.entries(); // forcing to do something with the file.
-            return true;
-        } catch (IOException e) {
-            return false;
-        } finally {
-            if (zf != null) {
-                try {
-                    zf.close();
-                } catch (IOException e) {
-                    // swallow the exception...
-                }
-            }
-        }
-    }
-    
-    /**
-     * 
+   /**
+     * Defines if the checker should just warn on dependency loading error via the reporter,
+     *  or simply fails.
      * @param warnOnDependencyLoadingError
      */
     public void setWarnOnDependencyLoadingError(boolean warnOnDependencyLoadingError) {

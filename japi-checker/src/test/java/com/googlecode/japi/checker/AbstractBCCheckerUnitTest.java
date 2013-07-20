@@ -92,7 +92,7 @@ public class AbstractBCCheckerUnitTest {
      * @throws IOException
      */
     public BasicReporter check(Class<? extends Rule> clazz, String ... includes) throws InstantiationException, IllegalAccessException, IOException {
-        BCChecker checker = new BCChecker(reference, newVersion);
+        BCChecker checker = new BCChecker();
         BasicReporter reporter = new BasicReporter();
         List<Rule> rules = new ArrayList<Rule>();
         if (clazz != null) {
@@ -103,7 +103,9 @@ public class AbstractBCCheckerUnitTest {
                 checker.addInclude(include);
             }
         }
-        checker.checkBacwardCompatibility(reporter, rules);
+        checker.setRules(rules);
+        checker.setReporter(reporter);
+        checker.checkBacwardCompatibility(reference, newVersion);
         return reporter;
     }
     
