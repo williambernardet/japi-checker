@@ -142,10 +142,15 @@ public class TestBCChecker extends AbstractBCCheckerUnitTest {
     }
 
     @Test
-    public void testClassChangedToFinal() throws InstantiationException, IllegalAccessException, IOException {
+    public void testPublicClassChangedToFinal() throws InstantiationException, IllegalAccessException, IOException {
         BasicReporter reporter = check(ClassChangedToFinal.class, "**/PublicClassToFinal.class");
         reporter.assertContains(Severity.ERROR, "The class com/googlecode/japi/checker/tests/PublicClassToFinal has been made final, this breaks inheritance.");
         assertEquals(1, reporter.count(Severity.ERROR));
+    }
+    @Test
+    public void testPackageScopeClassChangedToFinal() throws InstantiationException, IllegalAccessException, IOException {
+        BasicReporter reporter = check(ClassChangedToFinal.class, "**/PackageScopeClassToFinal.class");
+        assertEquals(0, reporter.count(Severity.ERROR));
     }
  
     @Test

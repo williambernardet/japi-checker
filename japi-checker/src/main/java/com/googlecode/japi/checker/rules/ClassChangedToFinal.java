@@ -17,6 +17,7 @@ package com.googlecode.japi.checker.rules;
 
 import com.googlecode.japi.checker.Reporter;
 import com.googlecode.japi.checker.Rule;
+import com.googlecode.japi.checker.Scope;
 import com.googlecode.japi.checker.Severity;
 import com.googlecode.japi.checker.Reporter.Report;
 import com.googlecode.japi.checker.model.ClassData;
@@ -27,7 +28,7 @@ public class ClassChangedToFinal implements Rule {
     @Override
     public void checkBackwardCompatibility(Reporter reporter,
             JavaItem reference, JavaItem newItem) {
-        if (reference instanceof ClassData) {
+        if (reference instanceof ClassData && reference.getVisibility().isMoreVisibleThan(Scope.NO_SCOPE)) {
             if (!reference.isFinal() && newItem.isFinal()) {
                 reporter.report(new Report(Severity.ERROR, "The class " + reference.getName() + " has been made final, this breaks inheritance.", reference, newItem));
             }

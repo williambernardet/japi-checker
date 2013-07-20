@@ -85,7 +85,7 @@ public class TestMain {
 
 		// Check that help is dumped on the console
 		assertTrue(outContent.toString().contains("Check API and ABI compatiblity of Java libraries."));
-		assertTrue(outContent.toString().contains("Error parsing command line:"));
+		assertTrue(errContent.toString().contains("Error parsing command line:"));
 		assertEquals(-1, result);
 	}
 
@@ -144,7 +144,7 @@ public class TestMain {
 		int result = new Main(args).run();
 
 		// Check that help is dumped on the console
-		assertTrue(outContent.toString().contains("Error count: 64"));
+		assertTrue(outContent.toString().contains("Error count: 65"));
 		assertTrue(outContent.toString().contains("Warning count: 3"));
 		assertTrue(outContent.toString().contains("ERROR:"));
 		assertTrue(outContent.toString().contains("WARNING:"));
