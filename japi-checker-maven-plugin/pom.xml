@@ -19,7 +19,7 @@
     <parent>
         <artifactId>japi-checker-pom</artifactId>
         <groupId>com.googlecode.japi-checker</groupId>
-        <version>0.2.0</version>
+        <version>0.2.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>japi-checker-maven-plugin</artifactId>

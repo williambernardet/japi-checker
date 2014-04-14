@@ -19,7 +19,7 @@
 	<groupId>com.googlecode.japi-checker</groupId>
 	<artifactId>japi-checker-pom</artifactId>
 	<name>JAPI Checker POM</name>
-	<version>0.2.0</version>
+	<version>0.2.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <licenses>
         <license>
