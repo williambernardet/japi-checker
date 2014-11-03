@@ -20,7 +20,6 @@ import com.googlecode.japi.checker.Scope;
 import com.googlecode.japi.checker.Reporter.Report;
 import com.googlecode.japi.checker.Rule;
 import com.googlecode.japi.checker.Severity;
-import com.googlecode.japi.checker.model.ClassData;
 import com.googlecode.japi.checker.model.JavaItem;
 
 public class CheckChangeOfScope implements Rule {
@@ -40,13 +39,6 @@ public class CheckChangeOfScope implements Rule {
                     reference.getVisibility() + " to " + newItem.getVisibility(), reference, newItem));
             }
         }
-    }
-    
-    private static ClassData getRootClass(JavaItem item) {
-        if (item.getOwner() == null) {
-            return (ClassData)item;
-        }
-        return item.getOwner();
     }
 
 }
