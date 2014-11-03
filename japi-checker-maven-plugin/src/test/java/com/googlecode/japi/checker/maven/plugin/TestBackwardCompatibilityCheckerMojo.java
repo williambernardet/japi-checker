@@ -17,7 +17,9 @@ package com.googlecode.japi.checker.maven.plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -164,4 +166,63 @@ public class TestBackwardCompatibilityCheckerMojo extends AbstractMojoTestCase {
 
     }
     
+    /**
+     * Backward compatibility breaks must fail maven for not excluded content.
+     * @throws MojoExecutionException
+     * @throws IllegalAccessException
+     * @throws MojoFailureException
+     */
+    public void testValidationWithNewJarAndExcludePath() throws MojoExecutionException, IllegalAccessException, MojoFailureException {
+        
+        ArtifactStub artifact = new ArtifactStub();
+        artifact.setGroupId(mojo.getProject().getGroupId());
+        artifact.setArtifactId(mojo.getProject().getArtifactId());
+        artifact.setVersion(mojo.getProject().getVersion());
+        artifact.setType("jar");
+        artifact.setScope(Artifact.SCOPE_RUNTIME);
+        artifact.setFile(new File("src/test/repository/com/googlecode/japi-checker/reference-test-jar/0.1.1-SNAPSHOT/reference-test-jar-0.1.1-SNAPSHOT.jar"));
+        mojo.getProject().setArtifact(artifact);
+        List<String> excludes = new ArrayList<String>();
+        excludes.add("com/googlecode/japi/checker/tests/RemovedClass.class");
+        mojo.setExcludes(excludes);
+        setVariableValueToObject(mojo, "artifact", artifact);
+
+        try {
+            mojo.execute();
+            fail("The validation must fail.");
+        } catch (MojoFailureException e) {
+            // should be there
+            assertTrue("You have 1 backward compatibility issues.".equals(e.getMessage()));
+        }
+    }
+
+    /**
+     * Backward compatibility breaks must fail maven for not excluded content.
+     * @throws MojoExecutionException
+     * @throws IllegalAccessException
+     * @throws MojoFailureException
+     */
+    public void testValidationWithNewJarAndIncludePath() throws MojoExecutionException, IllegalAccessException, MojoFailureException {
+        
+        ArtifactStub artifact = new ArtifactStub();
+        artifact.setGroupId(mojo.getProject().getGroupId());
+        artifact.setArtifactId(mojo.getProject().getArtifactId());
+        artifact.setVersion(mojo.getProject().getVersion());
+        artifact.setType("jar");
+        artifact.setScope(Artifact.SCOPE_RUNTIME);
+        artifact.setFile(new File("src/test/repository/com/googlecode/japi-checker/reference-test-jar/0.1.1-SNAPSHOT/reference-test-jar-0.1.1-SNAPSHOT.jar"));
+        mojo.getProject().setArtifact(artifact);
+        List<String> includes = new ArrayList<String>();
+        includes.add("com/googlecode/japi/checker/tests/RemovedClass.class");
+        mojo.setIncludes(includes);
+        setVariableValueToObject(mojo, "artifact", artifact);
+
+        try {
+            mojo.execute();
+            fail("The validation must fail.");
+        } catch (MojoFailureException e) {
+            // should be there
+            assertTrue("You have 1 backward compatibility issues.".equals(e.getMessage()));
+        }
+    }
 }

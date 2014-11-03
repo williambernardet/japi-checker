@@ -77,6 +77,21 @@ public class BackwardCompatibilityCheckerMojo
      * @required
      */
     private List<String> rules;
+
+    /**
+     * Which files should be included into the check.
+     * By default all class files are checked.
+     * @parameter
+     * @required
+     */
+    private List<String> includes = new ArrayList<String>();
+    
+    /**
+     * Which files should be excluded from the check.
+     * @parameter
+     * @required
+     */
+    private List<String> excludes = new ArrayList<String>();
     
     /**
      * Reference version
@@ -97,7 +112,7 @@ public class BackwardCompatibilityCheckerMojo
      *
      * @component role="org.apache.maven.artifact.factory.ArtifactFactory"
      * @readonly
-     * @reauired
+     * @required
      */
     private ArtifactFactory factory;
     
@@ -186,10 +201,18 @@ public class BackwardCompatibilityCheckerMojo
                 SeverityCountReporter ec = new SeverityCountReporter();
                 mux.add(ec);
             
-                // Running the check...
+                // Configuring the check...
                 this.getLog().info("Checking backward compatibility of " + artifact.toString() + " against " + referenceArtifact.toString());
                 checker.setReporter(mux);
                 checker.setRules(getRuleInstances());
+                for (String include : getIncludes()) {
+                    checker.addInclude(include);
+                }
+                for (String exclude : getExcludes()) {
+                    checker.addExclude(exclude);
+                }
+                
+                // Running the check...
                 checker.checkBacwardCompatibility(referenceArtifact.getFile(), artifact.getFile());
                 if (ec.hasSeverity()) {
                     getLog().error("You have " + ec.getCount() + " backward compatibility issues.");
@@ -326,4 +349,20 @@ public class BackwardCompatibilityCheckerMojo
         return this.project;
     }
 
+    public List<String> getIncludes() {
+        return includes;
+    }
+
+    public void setIncludes(List<String> includes) {
+        this.includes.addAll(includes);
+    }
+
+    public List<String> getExcludes() {
+        return excludes;
+    }
+
+    public void setExcludes(List<String> excludes) {
+        this.excludes.addAll(excludes);
+    }
+    
 }
