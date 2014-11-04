@@ -168,6 +168,14 @@ public class TestBCChecker extends AbstractBCCheckerUnitTest {
         reporter.assertContains(Severity.ERROR, "Could not find method protectedMethodRemoved(()V) in newer version.");
         assertEquals(2, reporter.count(Severity.ERROR));
     }
+
+    @Test
+    public void testCheckRemovedMethodFromRefactoredInterface() throws InstantiationException, IllegalAccessException, IOException {
+        BasicReporter reporter = check(CheckRemovedMethod.class, "**/inheritance/refactoring/IResource.class");
+        //reporter.assertContains(Severity.ERROR, "Could not find method close(()V) in newer version.");
+        //reporter.assertContains(Severity.ERROR, "Could not find method protectedMethodRemoved(()V) in newer version.");
+        assertEquals(0, reporter.count(Severity.ERROR));
+    }
     
     @Test
     public void testCheckMethodException() throws InstantiationException, IllegalAccessException, IOException {

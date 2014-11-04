@@ -206,6 +206,10 @@ public class ClassData extends JavaItem {
         return source;
     }
     
+    /**
+     * Returns the filename representing this item.
+     * @return the filename
+     */
     public String getFilename() {
         if (this.getName().lastIndexOf('/') != -1) {
             return this.getName().substring(0, this.getName().lastIndexOf('/') + 1) + getSource();

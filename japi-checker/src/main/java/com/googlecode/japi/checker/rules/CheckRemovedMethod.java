@@ -16,6 +16,7 @@
 package com.googlecode.japi.checker.rules;
 
 import com.googlecode.japi.checker.Reporter;
+import com.googlecode.japi.checker.RuleHelpers;
 import com.googlecode.japi.checker.Severity;
 import com.googlecode.japi.checker.Reporter.Report;
 import com.googlecode.japi.checker.model.ClassData;
@@ -32,9 +33,11 @@ public class CheckRemovedMethod implements Rule {
         if (reference instanceof ClassData) {
             ClassData referenceClass = (ClassData)reference;
             ClassData newClass = (ClassData)newItem;
+            // Let's check that any method implemented by the reference class
             for (MethodData oldMethod : referenceClass.getMethods()) {
                 boolean found = false;
-                for (MethodData newMethod: newClass.getMethods()) {
+                // Are still implemented either by the class or its super. 
+                for (MethodData newMethod: RuleHelpers.getAllMethods(newClass)) {
                     if (oldMethod.isSame(newMethod)) {
                         found = true;
                         break;

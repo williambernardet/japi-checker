@@ -144,7 +144,7 @@ public class TestMain {
 		int result = new Main(args).run();
 
 		// Check that help is dumped on the console
-		assertTrue(outContent.toString().contains("Error count: 65"));
+		assertTrue(outContent.toString().contains("Error count: 66"));
 		assertTrue(outContent.toString().contains("Warning count: 3"));
 		assertTrue(outContent.toString().contains("ERROR:"));
 		assertTrue(outContent.toString().contains("WARNING:"));
