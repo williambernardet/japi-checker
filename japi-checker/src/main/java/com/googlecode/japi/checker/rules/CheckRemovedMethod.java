@@ -37,7 +37,7 @@ public class CheckRemovedMethod implements Rule {
             for (MethodData oldMethod : referenceClass.getMethods()) {
                 boolean found = false;
                 // Are still implemented either by the class or its super. 
-                for (MethodData newMethod: RuleHelpers.getAllMethods(newClass)) {
+                for (MethodData newMethod: RuleHelpers.getClassMethodRecursive(newClass)) {
                     if (oldMethod.isSame(newMethod)) {
                         found = true;
                         break;
