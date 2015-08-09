@@ -20,6 +20,7 @@ Get the source code
     git clone https://github.com/williambernardet/japi-checker.git
 
 Create the binaries
+    
     cd japi-checker
     mvn clean verify
 
