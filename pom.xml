@@ -70,8 +70,8 @@
     </distributionManagement>
     
     <scm>
-    	<connection>scm:hg:https://code.google.com/p/japi-checker</connection>
-    	<developerConnection>scm:hg:https://code.google.com/p/japi-checker</developerConnection>
+    	<connection>scm:git:https://github.com/williambernardet/japi-checker.git</connection>
+    	<developerConnection>scm:git:https://github.com/williambernardet/japi-checker.git</developerConnection>
     	<url>https://code.google.com/p/japi-checker</url>
     </scm>
     <build>
@@ -115,7 +115,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.1</version>
+                <version>3.1</version><!--$NO-MVN-MAN-VER$-->
                 <inherited>false</inherited>
                 <configuration>
                     <siteDirectory>${project.basedir}/src/site</siteDirectory>
