@@ -53,6 +53,17 @@
         <module>japi-checker-cli</module>
     </modules>
     
+    <repositories>
+        <repository>
+            <id>sonatype-nexus</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+        <repository>
+            <id>sonatype-nexus-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
+    
     <distributionManagement>
         <repository>
             <id>sonatype-nexus</id>
@@ -97,7 +108,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
-                <version>2.5.2</version>
+                <version>3.0.0</version>
                 <executions>
                     <execution>
                         <id>findbugs-verify</id>
@@ -115,7 +126,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.1</version><!--$NO-MVN-MAN-VER$-->
+                <version>3.4</version><!--$NO-MVN-MAN-VER$-->
                 <inherited>false</inherited>
                 <configuration>
                     <siteDirectory>${project.basedir}/src/site</siteDirectory>
@@ -123,7 +134,7 @@
                         <plugin>
                             <groupId>org.codehaus.mojo</groupId>
                             <artifactId>findbugs-maven-plugin</artifactId>
-                            <version>2.5.2</version>
+                            <version>3.0.0</version>
                          </plugin>
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
@@ -150,19 +161,19 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.1</version>
+                    <version>3.4</version>
                     <configuration>
                         <siteDirectory>${project.parent.basedir}/src/site</siteDirectory>
                     <reportPlugins>
                         <plugin>
                             <groupId>org.codehaus.mojo</groupId>
                             <artifactId>findbugs-maven-plugin</artifactId>
-                            <version>2.5.2</version>
+                            <version>3.0.0</version>
                          </plugin>
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-project-info-reports-plugin</artifactId>
-                            <version>2.5</version>
+                            <version>2.8.1</version>
                             <configuration>
                                 <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
                                 <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
@@ -181,8 +192,7 @@
             </plugins>
         </pluginManagement>    
     </build>
-    
-     
+         
     <profiles>
         <profile>
             <id>release-sign-artifacts</id>
