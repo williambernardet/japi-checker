@@ -4,14 +4,10 @@ japi-checker
 
 
 Official project page:
-https://bitbucket.org/williambernardet/japi-checker/wiki/Home
+https://github.com/williambernardet/japi-checker/wiki
 
 Official repository:
-https://bitbucket.org/williambernardet/japi-checker
-
-Git mirror (accepting contributions):
 https://github.com/williambernardet/japi-checker 
-
 
 How to build
 ============
