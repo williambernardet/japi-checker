@@ -1,0 +1,7 @@
+.project
+japi-checker-ant/target/
+japi-checker-cli/target/
+japi-checker-maven-plugin/target/
+japi-checker/target/
+new-test-jar/target/
+reference-test-jar/target/
