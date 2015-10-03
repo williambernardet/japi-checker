@@ -43,6 +43,10 @@
         	<url>https://github.com/trohovsky</url>
         </developer>
     </developers>
+
+	<properties>
+		<maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
+	</properties>
     
     <modules>
         <module>japi-checker</module>
