@@ -7,3 +7,9 @@ new-test-jar/target/
 reference-test-jar/target/
 .settings/
 target/
+japi-checker-ant/.classpath
+japi-checker-cli/.classpath
+japi-checker-maven-plugin/.classpath
+japi-checker/.classpath
+new-test-jar/.classpath
+reference-test-jar/.classpath
