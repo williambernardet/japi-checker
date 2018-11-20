@@ -1,7 +1,9 @@
 japi-checker
 ============
-[![Build Status](https://travis-ci.org/williambernardet/japi-checker.svg?branch=master)](https://travis-ci.org/williambernardet/japi-checker)
 
+[![Build Status](https://williambernardet.visualstudio.com/Public/_apis/build/status/japi-checker)](https://williambernardet.visualstudio.com/Public/_build/latest?definitionId=14)
+
+[![Build Status](https://travis-ci.org/williambernardet/japi-checker.svg?branch=master)](https://travis-ci.org/williambernardet/japi-checker)
 
 Official project page:
 https://github.com/williambernardet/japi-checker/wiki
